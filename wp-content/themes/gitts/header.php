@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html <?php language_attributes(); ?> data-theme="gitts">
+<head>
+    <meta charset="<?php bloginfo('charset'); ?>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+    html,body{background:#fff;color:#1E293B;}
+    [data-theme="gitts"]{--b1:1.0 0.0 0;--b2:0.976 0.005 250;--b3:0.916 0.014 250;--bc:0.208 0.030 250;--p:0.389 0.106 243.35;--pf:0.299 0.082 241.5;--pc:0.965 0.005 90;--s:0.512 0.112 152.8;--sf:0.432 0.098 151.5;--sc:0.965 0.005 90;--a:0.546 0.191 22.5;--af:0.478 0.172 21.8;--ac:1.0 0.0 0;--n:0.554 0.022 250;--nf:0.446 0.022 250;--nc:0.965 0.005 90;}
+    </style>
+    <?php wp_head(); ?>
+</head>
+<body <?php body_class('font-sans bg-base-100 text-base-content antialiased'); ?>>
+<?php wp_body_open(); ?>
+
+<!-- NAVBAR -->
+<div class="navbar bg-white/80 backdrop-blur-lg border-b border-slate-200/60 sticky top-0 z-50 px-4 lg:px-8">
+    <!-- Logo -->
+    <div class="navbar-start">
+        <a href="<?php echo home_url(); ?>" class="flex items-center gap-3 group">
+            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/logo-digital.png" alt="GITTS" class="h-10 w-auto transition-transform group-hover:scale-105">
+            <span class="text-primary font-semibold text-lg hidden sm:block tracking-tight">GITTS</span>
+        </a>
+    </div>
+
+    <!-- Desktop nav -->
+    <div class="navbar-center hidden lg:flex">
+        <ul class="menu menu-horizontal px-1 gap-1">
+            <li><a href="<?php echo home_url(); ?>" class="text-sm font-medium text-slate-600 hover:text-primary <?php if(is_front_page()) echo 'active text-primary'; ?>">Inicio</a></li>
+            <li><a href="<?php echo home_url('/miembros'); ?>" class="text-sm font-medium text-slate-600 hover:text-primary <?php if(is_page('miembros') || is_page('gente') || is_singular('miembro')) echo 'active text-primary'; ?>">Miembros</a></li>
+            <li><a href="<?php echo home_url('/investigacion'); ?>" class="text-sm font-medium text-slate-600 hover:text-primary <?php if(is_page('investigacion') || is_singular('proyecto')) echo 'active text-primary'; ?>">Investigación</a></li>
+            <li><a href="<?php echo home_url('/servicios'); ?>" class="text-sm font-medium text-slate-600 hover:text-primary <?php if(is_page('servicios')) echo 'active text-primary'; ?>">Servicios</a></li>
+            <li><a href="<?php echo home_url('/noticias'); ?>" class="text-sm font-medium text-slate-600 hover:text-primary <?php if(is_page('noticias') || is_page('actualidad')) echo 'active text-primary'; ?>">Noticias</a></li>
+        </ul>
+    </div>
+
+    <!-- CTA + Mobile -->
+    <div class="navbar-end gap-2">
+        <a href="<?php echo home_url('/unete'); ?>" class="btn btn-accent btn-sm text-sm font-medium hidden lg:inline-flex">Únete a nosotros</a>
+
+        <!-- Mobile dropdown -->
+        <div class="dropdown dropdown-end lg:hidden">
+            <div tabindex="0" role="button" class="btn btn-ghost btn-square">
+                <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </div>
+            <ul tabindex="0" class="menu menu-sm dropdown-content bg-white rounded-xl z-[1] mt-3 w-56 p-3 shadow-lg border border-slate-200">
+                <li><a href="<?php echo home_url(); ?>" class="font-medium text-slate-700">Inicio</a></li>
+                <li><a href="<?php echo home_url('/miembros'); ?>" class="font-medium text-slate-700">Miembros</a></li>
+                <li><a href="<?php echo home_url('/investigacion'); ?>" class="font-medium text-slate-700">Investigación</a></li>
+                <li><a href="<?php echo home_url('/servicios'); ?>" class="font-medium text-slate-700">Servicios</a></li>
+                <li><a href="<?php echo home_url('/noticias'); ?>" class="font-medium text-slate-700">Noticias</a></li>
+                <li class="mt-2"><a href="<?php echo home_url('/unete'); ?>" class="btn btn-accent btn-sm text-sm font-medium">Únete</a></li>
+            </ul>
+        </div>
+    </div>
+</div>

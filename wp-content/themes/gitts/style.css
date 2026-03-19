@@ -1,0 +1,203 @@
+/*
+Theme Name: GITTS Portal Web
+Theme URI: https://gitts.utp.ac.pa
+Author: GITTS - UTP
+Description: Portal oficial GITTS — Brand Book 2023
+Version: 4.0
+Text Domain: gitts
+*/
+
+/* ── Base ── */
+html { scroll-behavior: smooth; }
+body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+/* ── Cards — subtle, trust whitespace ── */
+.card {
+    border: 1px solid rgba(226,232,240,0.8);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+.card:hover {
+    box-shadow: 0 4px 16px rgba(15,23,42,0.08);
+    transform: translateY(-2px);
+}
+
+/* ── Buttons — clean, minimal movement ── */
+.btn {
+    letter-spacing: 0.01em;
+    transition: all 0.2s ease;
+}
+.btn:hover {
+    transform: translateY(-1px);
+}
+.btn:active {
+    transform: translateY(0);
+}
+
+/* ── Navbar menu items — override DaisyUI dark bg ── */
+[data-theme="gitts"] .menu a,
+[data-theme="gitts"] .menu li > a,
+[data-theme="gitts"] .navbar .menu a,
+[data-theme="gitts"] .navbar .menu li > a {
+    background-color: transparent !important;
+    color: #475569;
+}
+[data-theme="gitts"] .menu a:hover,
+[data-theme="gitts"] .menu li > a:hover {
+    background-color: rgba(22,82,136,0.06) !important;
+    color: #165288;
+}
+[data-theme="gitts"] .menu a.active,
+[data-theme="gitts"] .menu li > a.active {
+    background-color: rgba(22,82,136,0.08) !important;
+    color: #165288;
+}
+
+/* ── Nav link underline ── */
+.nav-link {
+    position: relative;
+}
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #165288;
+    border-radius: 1px;
+    transition: width 0.3s ease;
+}
+.nav-link:hover::after,
+.nav-link.active::after {
+    width: 100%;
+}
+
+/* ── Page header gradient ── */
+.page-header {
+    background: linear-gradient(135deg, #0F172A 0%, #165288 60%, #1a6bb5 100%);
+}
+
+/* ── Member card — clean profile style ── */
+.member-card .avatar img,
+.member-card .avatar > div {
+    ring: 2px;
+    ring-color: rgba(241,245,249,0.8);
+}
+
+/* ── Tabs — editorial underline style ── */
+.tab-underline {
+    border-bottom: 2px solid transparent;
+    background: none;
+    border-radius: 0;
+    padding: 0.75rem 1.25rem;
+    font-weight: 400;
+    color: #64748B;
+    transition: all 0.2s ease;
+}
+.tab-underline:hover {
+    color: #165288;
+}
+.tab-underline.tab-active {
+    border-bottom-color: #165288;
+    color: #165288;
+    font-weight: 500;
+}
+
+/* ── Footer pattern ── */
+.footer-gradient {
+    background: linear-gradient(180deg, #0E3A5F 0%, #0B2D47 100%);
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #F1F5F9; }
+::-webkit-scrollbar-thumb { background: #94A3B8; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #64748B; }
+
+/* ── AOS overrides — subtler ── */
+[data-aos] {
+    transition-duration: 500ms !important;
+}
+
+/* ── Form controls ── */
+.input, .select, .textarea {
+    background-color: #fff;
+    border-color: #E2E8F0;
+    color: #1E293B;
+}
+.input::placeholder, .textarea::placeholder {
+    color: #94A3B8;
+}
+.input:focus, .select:focus, .textarea:focus {
+    background-color: #fff;
+    border-color: #165288;
+    outline: 2px solid rgba(22,82,136,0.15);
+    outline-offset: 1px;
+}
+
+/* ── Link hover ── */
+a.link-hover:hover {
+    opacity: 1;
+}
+
+/* ── Article content (projects & news) ── */
+.proyecto-content, .noticia-content {
+    color: #475569;
+    font-size: 0.95rem;
+    line-height: 1.8;
+}
+.proyecto-content h2, .noticia-content h2 {
+    color: #165288;
+    font-size: 1.35rem;
+    font-weight: 600;
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #E2E8F0;
+}
+.proyecto-content h2:first-child, .noticia-content h2:first-child {
+    margin-top: 0;
+}
+.proyecto-content h3, .noticia-content h3 {
+    color: #1E293B;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+}
+.proyecto-content p, .noticia-content p {
+    margin-bottom: 1.25rem;
+}
+.proyecto-content ul, .proyecto-content ol,
+.noticia-content ul, .noticia-content ol {
+    margin: 1rem 0 1.5rem 1.25rem;
+    padding: 0;
+}
+.proyecto-content ul { list-style-type: disc; }
+.proyecto-content ol, .noticia-content ol { list-style-type: decimal; }
+.noticia-content ul { list-style-type: disc; }
+.proyecto-content li, .noticia-content li {
+    margin-bottom: 0.5rem;
+    padding-left: 0.25rem;
+}
+.proyecto-content strong, .noticia-content strong {
+    color: #1E293B;
+    font-weight: 600;
+}
+.proyecto-content a, .noticia-content a {
+    color: #165288;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+.proyecto-content a:hover, .noticia-content a:hover {
+    color: #0E3A5F;
+}
+
+/* ── Service blocks ── */
+.service-block {
+    transition: all 0.3s ease;
+}
+.service-block:hover {
+    background-color: #0e3a5f;
+}

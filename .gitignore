@@ -1,0 +1,40 @@
+# WordPress core (se instala aparte)
+wp-admin/
+wp-includes/
+wp-*.php
+!wp-config-sample.php
+index.php
+license.txt
+readme.html
+router.php
+xmlrpc.php
+
+# Configuración con credenciales
+wp-config.php
+
+# WP-CLI
+wp-cli.phar
+
+# Uploads (media pesada)
+wp-content/uploads/
+
+# Plugins default
+wp-content/plugins/akismet/
+wp-content/plugins/hello.php
+
+# Languages (se descargan automáticamente)
+wp-content/languages/
+
+# Otros temas
+wp-content/themes/twenty*/
+
+# Caché y backups
+wp-content/cache/
+wp-content/upgrade/
+wp-content/backup*/
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.log
+.htaccess
