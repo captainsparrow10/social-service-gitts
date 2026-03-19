@@ -17,13 +17,13 @@
  7. WordPress will then import each of the posts, pages, comments, categories, etc.
     contained in this file into your site.
 -->
-<!-- generator="WordPress/6.9.4" created="2026-03-19 00:57" -->
+<!-- generator="WordPress/6.9.4" created="2026-03-19 01:18" -->
 <rss version="2.0" xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/CommentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:wp="http://wordpress.org/export/1.2/">
   <channel>
 <title>GITTS - Portal Web</title>
 <link>http://localhost:3100</link>
 <description/>
-<pubDate>Thu, 19 Mar 2026 00:57:09 +0000</pubDate>
+<pubDate>Thu, 19 Mar 2026 01:18:05 +0000</pubDate>
 <language>es</language>
 <wp:wxr_version>1.2</wp:wxr_version>
 <wp:base_site_url>http://localhost:3100</wp:base_site_url>
@@ -411,7 +411,7 @@
   </wp:postmeta>
 </item>
 <item>
-  <title><![CDATA[Actualidad]]></title>
+  <title><![CDATA[Noticias]]></title>
   <link>http://localhost:3100/noticias/</link>
   <pubDate>Tue, 17 Mar 2026 01:41:03 +0000</pubDate>
   <dc:creator/>
@@ -422,8 +422,8 @@
   <wp:post_id>11</wp:post_id>
   <wp:post_date>2026-03-17 01:41:03</wp:post_date>
   <wp:post_date_gmt>2026-03-17 01:41:03</wp:post_date_gmt>
-  <wp:post_modified>2026-03-18 19:33:13</wp:post_modified>
-  <wp:post_modified_gmt>2026-03-18 19:33:13</wp:post_modified_gmt>
+  <wp:post_modified>2026-03-19 01:17:57</wp:post_modified>
+  <wp:post_modified_gmt>2026-03-19 01:17:57</wp:post_modified_gmt>
   <wp:comment_status>closed</wp:comment_status>
   <wp:ping_status>closed</wp:ping_status>
   <wp:post_name>noticias</wp:post_name>
@@ -435,7 +435,7 @@
   <wp:is_sticky>0</wp:is_sticky>
   <wp:postmeta>
     <wp:meta_key>_wp_page_template</wp:meta_key>
-    <wp:meta_value><![CDATA[page-actualidad.php]]></wp:meta_value>
+    <wp:meta_value><![CDATA[page-noticias.php]]></wp:meta_value>
   </wp:postmeta>
 </item>
 <item>
@@ -523,7 +523,7 @@
   </wp:postmeta>
 </item>
 <item>
-  <title><![CDATA[Gente]]></title>
+  <title><![CDATA[Miembros]]></title>
   <link>http://localhost:3100/miembros/</link>
   <pubDate>Tue, 17 Mar 2026 02:49:56 +0000</pubDate>
   <dc:creator/>
@@ -534,8 +534,8 @@
   <wp:post_id>15</wp:post_id>
   <wp:post_date>2026-03-17 02:49:56</wp:post_date>
   <wp:post_date_gmt>2026-03-17 02:49:56</wp:post_date_gmt>
-  <wp:post_modified>2026-03-18 19:33:13</wp:post_modified>
-  <wp:post_modified_gmt>2026-03-18 19:33:13</wp:post_modified_gmt>
+  <wp:post_modified>2026-03-19 01:17:57</wp:post_modified>
+  <wp:post_modified_gmt>2026-03-19 01:17:57</wp:post_modified_gmt>
   <wp:comment_status>closed</wp:comment_status>
   <wp:ping_status>closed</wp:ping_status>
   <wp:post_name>miembros</wp:post_name>
@@ -547,7 +547,7 @@
   <wp:is_sticky>0</wp:is_sticky>
   <wp:postmeta>
     <wp:meta_key>_wp_page_template</wp:meta_key>
-    <wp:meta_value><![CDATA[page-gente.php]]></wp:meta_value>
+    <wp:meta_value><![CDATA[page-miembros.php]]></wp:meta_value>
   </wp:postmeta>
 </item>
 <item>
