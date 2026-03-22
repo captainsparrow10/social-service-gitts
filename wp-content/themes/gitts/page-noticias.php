@@ -2,9 +2,8 @@
 
 <div class="page-header py-20">
     <div class="max-w-7xl mx-auto px-6" data-aos="fade-right">
-        <p class="text-slate-300 text-sm font-medium tracking-wide mb-3">Mantente informado</p>
-        <h1 class="text-white font-light text-4xl">Noticias</h1>
-        <p class="text-slate-300 mt-3 text-lg font-light">Actividades, logros y novedades de GITTS.</p>
+        <h1 class="text-white font-light text-4xl">Actualidad</h1>
+        <p class="text-slate-300 mt-3 text-lg font-light">Conferencias, premios, defensas de tesis, workshops y eventos del grupo.</p>
     </div>
 </div>
 
@@ -13,9 +12,10 @@
     <div class="max-w-7xl mx-auto px-6">
         <div class="flex gap-1" data-aos="fade-up">
             <button class="tab-underline tab-active news-tab" data-filter="all">Todas</button>
-            <button class="tab-underline news-tab" data-filter="investigacion">Investigación</button>
-            <button class="tab-underline news-tab" data-filter="proyectos">Proyectos y Colaboraciones</button>
-            <button class="tab-underline news-tab" data-filter="vida">Vida Académica</button>
+            <button class="tab-underline news-tab" data-filter="conferencias">Conferencias</button>
+            <button class="tab-underline news-tab" data-filter="premios">Premios y Reconocimientos</button>
+            <button class="tab-underline news-tab" data-filter="tesis">Defensas de Tesis</button>
+            <button class="tab-underline news-tab" data-filter="eventos">Workshops y Eventos</button>
         </div>
     </div>
 </section>

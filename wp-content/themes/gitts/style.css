@@ -7,9 +7,23 @@ Version: 4.0
 Text Domain: gitts
 */
 
+/* ── Myriad Pro — GITTS Brand Font ── */
+@font-face { font-family: 'Myriad Pro'; src: url('assets/fonts/MyriadPro-Light.otf') format('opentype'); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Myriad Pro'; src: url('assets/fonts/MyriadPro-Regular.otf') format('opentype'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Myriad Pro'; src: url('assets/fonts/MyriadPro-It.otf') format('opentype'); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Myriad Pro'; src: url('assets/fonts/MyriadPro-Semibold.otf') format('opentype'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Myriad Pro'; src: url('assets/fonts/MyriadPro-Bold.otf') format('opentype'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Myriad Pro'; src: url('assets/fonts/MyriadPro-BoldIt.otf') format('opentype'); font-weight: 700; font-style: italic; font-display: swap; }
+
 /* ── Base ── */
 html { scroll-behavior: smooth; }
-body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; width: 100% !important; max-width: 100% !important; margin: 0 !important; }
+body > * { max-width: 100%; }
+.wp-site-blocks { max-width: 100% !important; padding: 0 !important; }
+
+/* ── Hide scrollbar for carousels ── */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* ── Cards — subtle, trust whitespace ── */
 .card {
@@ -35,21 +49,28 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 }
 
 /* ── Navbar menu items — override DaisyUI dark bg ── */
-[data-theme="gitts"] .menu a,
-[data-theme="gitts"] .menu li > a,
 [data-theme="gitts"] .navbar .menu a,
 [data-theme="gitts"] .navbar .menu li > a {
     background-color: transparent !important;
+    color: #CBD5E1;
+}
+[data-theme="gitts"] .navbar .menu a:hover,
+[data-theme="gitts"] .navbar .menu li > a:hover {
+    background-color: rgba(255,255,255,0.08) !important;
+    color: #FFFFFF;
+}
+[data-theme="gitts"] .navbar .menu a.active,
+[data-theme="gitts"] .navbar .menu li > a.active {
+    background-color: rgba(255,255,255,0.1) !important;
+    color: #FFFFFF;
+}
+/* Non-navbar menus (dropdowns, mobile) */
+[data-theme="gitts"] .dropdown-content .menu a {
+    background-color: transparent !important;
     color: #475569;
 }
-[data-theme="gitts"] .menu a:hover,
-[data-theme="gitts"] .menu li > a:hover {
+[data-theme="gitts"] .dropdown-content .menu a:hover {
     background-color: rgba(22,82,136,0.06) !important;
-    color: #165288;
-}
-[data-theme="gitts"] .menu a.active,
-[data-theme="gitts"] .menu li > a.active {
-    background-color: rgba(22,82,136,0.08) !important;
     color: #165288;
 }
 
@@ -75,7 +96,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 
 /* ── Page header gradient ── */
 .page-header {
-    background: linear-gradient(135deg, #0F172A 0%, #165288 60%, #1a6bb5 100%);
+    background: linear-gradient(135deg, #0F172A 0%, #165288 60%, #495C9B 100%);
 }
 
 /* ── Member card — clean profile style ── */
@@ -106,7 +127,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 
 /* ── Footer pattern ── */
 .footer-gradient {
-    background: linear-gradient(180deg, #0E3A5F 0%, #0B2D47 100%);
+    background: linear-gradient(180deg, #165288 0%, #0E3A5F 100%);
 }
 
 /* ── Scrollbar ── */

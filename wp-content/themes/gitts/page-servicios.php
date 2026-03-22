@@ -2,7 +2,6 @@
 
 <div class="page-header py-20">
     <div class="max-w-7xl mx-auto px-6" data-aos="fade-right">
-        <p class="text-slate-300 text-sm font-medium tracking-wide mb-3">Oferta de valor</p>
         <h1 class="text-white font-light text-4xl">Servicios Institucionales</h1>
         <p class="text-slate-300 mt-3 text-lg font-light">Oferta de valor técnico para la industria, el sector público y corporativo.</p>
     </div>

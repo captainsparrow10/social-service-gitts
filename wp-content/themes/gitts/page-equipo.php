@@ -79,12 +79,12 @@
         <h2 style="font-size:1.5rem;color:var(--navy);margin:50px 0 25px;">Estudiantes Activos</h2>
         <div class="cards-grid">
             <div class="team-card">
-                <div style="width:120px;height:120px;border-radius:50%;background:#e8f5e9;margin:0 auto 15px;display:flex;align-items:center;justify-content:center;font-size:2rem;">&#127891;</div>
+                <div style="width:120px;height:120px;border-radius:50%;background:#F1F5F9;margin:0 auto 15px;display:flex;align-items:center;justify-content:center;font-size:2rem;">&#127891;</div>
                 <h3>Edson Galagarza</h3>
                 <p class="role">Apoyo técnico y matemático</p>
             </div>
             <div class="team-card">
-                <div style="width:120px;height:120px;border-radius:50%;background:#e3f2fd;margin:0 auto 15px;display:flex;align-items:center;justify-content:center;font-size:2rem;">&#127891;</div>
+                <div style="width:120px;height:120px;border-radius:50%;background:#F1F5F9;margin:0 auto 15px;display:flex;align-items:center;justify-content:center;font-size:2rem;">&#127891;</div>
                 <h3>Kathia Broce</h3>
                 <p class="role">Análisis de materia orgánica</p>
             </div>

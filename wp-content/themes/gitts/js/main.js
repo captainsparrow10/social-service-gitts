@@ -33,6 +33,76 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // GLightbox — galería de imágenes con zoom y navegación
+    if (typeof GLightbox !== 'undefined') {
+        GLightbox({
+            selector: '.glightbox',
+            touchNavigation: true,
+            loop: true,
+            closeOnOutsideClick: true,
+        });
+    }
+
+    // Carousel navigation buttons
+    document.querySelectorAll('.carousel-prev').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var target = document.getElementById(this.getAttribute('data-target'));
+            if (target) target.scrollBy({ left: -340, behavior: 'smooth' });
+        });
+    });
+    document.querySelectorAll('.carousel-next').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var target = document.getElementById(this.getAttribute('data-target'));
+            if (target) target.scrollBy({ left: 340, behavior: 'smooth' });
+        });
+    });
+
+    // Producción científica filters
+    document.querySelectorAll('.prod-filter').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var section = this.getAttribute('data-section');
+            document.querySelectorAll('.prod-filter').forEach(function(b) {
+                b.classList.remove('filter-active', 'bg-primary', 'text-white', 'border-none');
+                b.classList.add('btn-outline', 'border-slate-300', 'text-slate-600');
+            });
+            this.classList.add('filter-active', 'bg-primary', 'text-white', 'border-none');
+            this.classList.remove('btn-outline', 'border-slate-300', 'text-slate-600');
+            document.querySelectorAll('.prod-section').forEach(function(s) {
+                if (section === 'all' || s.getAttribute('data-section') === section) {
+                    s.style.display = '';
+                } else {
+                    s.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // Project filters (investigacion page)
+    document.querySelectorAll('.project-filter').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var filter = this.getAttribute('data-filter');
+            // Update active button style
+            document.querySelectorAll('.project-filter').forEach(function(b) {
+                b.classList.remove('filter-active');
+                b.classList.remove('bg-primary', 'text-white', 'border-none');
+                b.classList.add('btn-outline', 'border-slate-300', 'text-slate-600');
+            });
+            this.classList.add('filter-active', 'bg-primary', 'text-white', 'border-none');
+            this.classList.remove('btn-outline', 'border-slate-300', 'text-slate-600');
+
+            // Filter cards
+            document.querySelectorAll('.project-card').forEach(function(card) {
+                var estado = card.getAttribute('data-estado');
+                var tipo = card.getAttribute('data-tipo');
+                if (filter === 'all' || estado === filter || tipo === filter) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+
     // Custom dropdown filters
     document.querySelectorAll('.filter-option').forEach(function(opt) {
         opt.addEventListener('click', function(e) {

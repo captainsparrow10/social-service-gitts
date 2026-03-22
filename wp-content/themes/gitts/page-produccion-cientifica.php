@@ -2,134 +2,241 @@
 
 <div class="page-header py-20">
     <div class="max-w-7xl mx-auto px-6" data-aos="fade-right">
-        <p class="text-slate-300 text-sm font-medium tracking-wide mb-3">Resultados</p>
         <h1 class="text-white font-light text-4xl">Producción Científica</h1>
-        <p class="text-slate-300 mt-3 text-lg font-light">Resultados que generan conocimiento: publicaciones, tesis y desarrollos tecnológicos producidos por el grupo.</p>
+        <p class="text-slate-300 mt-3 text-lg font-light max-w-3xl">Artículos en revistas y congresos internacionales, tesis desarrolladas por estudiantes de distintos niveles y resultados de innovación tecnológica.</p>
     </div>
 </div>
 
-<section class="py-20 bg-white">
-    <div class="max-w-5xl mx-auto px-6">
-        <!-- DaisyUI Tabs -->
-        <div class="tabs tabs-boxed bg-slate-50 inline-flex mb-10" data-aos="fade-up">
-            <button class="tab tab-active pub-tab" data-tab="publicaciones">Publicaciones</button>
-            <button class="tab pub-tab" data-tab="libros">Libros</button>
-            <button class="tab pub-tab" data-tab="tesis">Tesis</button>
-            <button class="tab pub-tab" data-tab="conferencias">Conferencias Nacionales</button>
-        </div>
+<!-- Introducción -->
+<section class="py-14 bg-white">
+    <div class="max-w-3xl mx-auto px-6 text-center" data-aos="fade-up">
+        <?php
+        $intro = wp_kses_post(get_option('gitts_intro_produccion', ''));
+        if ($intro) :
+            echo '<p class="text-slate-600 text-base leading-relaxed">' . $intro . '</p>';
+        else :
+        ?>
+            <p class="text-slate-600 text-base leading-relaxed">La investigación desarrollada en GITTS se traduce en generación de conocimiento, formación de nuevos investigadores y desarrollo de tecnologías con impacto. En esta sección se reúnen y organizan los principales resultados generados por el grupo y su comunidad académica.</p>
+        <?php endif; ?>
+    </div>
+</section>
 
-        <!-- PUBLICACIONES -->
-        <div id="tab-publicaciones" class="tab-panel" data-aos="fade-up">
-            <h3 class="text-primary font-semibold text-xl mb-6">Artículos en Revistas y Conferencias Internacionales</h3>
-            <?php
-            $pubs = new WP_Query(['post_type' => 'publicacion', 'posts_per_page' => 20]);
-            if ($pubs->have_posts()) :
-                while ($pubs->have_posts()) : $pubs->the_post();
-                    $autores = get_post_meta(get_the_ID(), '_publicacion_autores', true);
-                    $revista = get_post_meta(get_the_ID(), '_publicacion_revista', true);
-                    $anio = get_post_meta(get_the_ID(), '_publicacion_anio', true);
-                    $doi = get_post_meta(get_the_ID(), '_publicacion_doi', true);
-            ?>
-                <div class="border-l-4 border-primary pl-4 mb-6">
-                    <h4 class="font-semibold text-base-content text-sm"><?php the_title(); ?></h4>
-                    <p class="text-xs text-slate-500 mt-1"><?php echo esc_html($autores); ?></p>
-                    <p class="text-xs text-slate-400"><?php echo esc_html($revista); ?> — <?php echo esc_html($anio); ?>
-                        <?php if ($doi) : ?> | <a href="<?php echo esc_url($doi); ?>" class="link link-accent text-xs" target="_blank">DOI</a><?php endif; ?>
-                    </p>
-                </div>
-            <?php endwhile; wp_reset_postdata();
-            else :
-                $articulos = [
-                    ['Compressive sensing approach to hyperspectral image acquisition using a single-pixel detector', 'F. Arias, M. Zambrano, E. Arzuaga', 'LACCEI — 2016'],
-                    ['Target localization through compressive sampling', 'M. Zambrano, C. Medina, E. Galagarza', 'IEEE Latin America Transactions — 2015'],
-                    ['A survey of LED visible light communication applications', 'C. Medina, M. Zambrano, K. Navarro', 'IJAET — 2015'],
-                    ['Sparse objects localization using compressive sampling', 'M. Zambrano, C. Medina, R. Tamayo', 'IEEE Latin America Transactions — 2015'],
-                    ['Direct product convolutional codes', 'C. Medina, M. Zambrano', 'LATINCOM — 2014'],
-                    ['LDPC codes GUI for teaching and learning', 'C. Medina, M. Zambrano, E. Iglesias', 'CONCAPAN XXXIV — 2014'],
-                    ['Object reconstruction with compressive sampling', 'M. Zambrano, C. Medina, E. Galagarza', 'CONCAPAN XXXIV — 2014'],
-                    ['Sparse signal reconstruction algorithms comparison', 'M. Zambrano, F. Arias, C. Medina', 'LACCEI — 2014'],
-                    ['Hand detection with computer vision', 'L. Cheung, C. Medina', 'Revista I+D Tecnológico — 2013'],
-                    ['Power line communication effects analysis', 'M. Zambrano, J. Montiel', 'LACCEI — 2013'],
-                    ['Graphic modules for communications teaching', 'C. Medina', 'Revista I+D Tecnológico — 2012'],
-                    ['Compressive MIMO target localization', 'M. Zambrano, R. Paz', 'APANAC — 2012'],
-                    ['Cramér-Rao bound for signal parameter estimation', 'E. Marengo, M. Zambrano, P. Berestesky', 'Intl J. Antennas and Propagation — 2012'],
-                    ['Cramér-Rao study for compressed sensing', 'M. Zambrano, E. Marengo, D. Brady', 'IASTED — 2010'],
-                    ['Coherent single-detector imaging system', 'M. Zambrano, E. Marengo, J. Fisher', 'IEEE Workshop on SPS — 2010'],
-                    ['Cramér-Rao study Part II', 'E. Marengo, M. Zambrano, D. Brady', 'IASTED — 2009'],
-                    ['Product convolutional codes', 'C. Medina, V. Sidorenko', 'I+D Tecnológico — 2009'],
-                    ['Block to convolutional codes construction', 'V. Sidorenko, C. Medina, M. Bossert', 'ISIT — 2007'],
-                    ['Error exponent for product convolutional codes', 'C. Medina, V. Sidorenko, V. Zyablov', 'Problems in Info. Transmission — 2006'],
-                    ['Space-time product codes', 'C. Medina, M. Gabrowska', 'IEEE Zurich Seminar — 2006'],
-                    ['Product convolutional codes construction', 'M. Bossert, C. Medina, V. Sidorenko', 'ISIT — 2005'],
-                ];
-                foreach ($articulos as $a) :
-            ?>
-                <div class="border-l-4 border-primary pl-4 mb-6">
-                    <h4 class="font-semibold text-base-content text-sm"><?php echo $a[0]; ?></h4>
-                    <p class="text-xs text-slate-500 mt-1"><?php echo $a[1]; ?></p>
-                    <p class="text-xs text-slate-400"><?php echo $a[2]; ?></p>
-                </div>
-            <?php endforeach; endif; ?>
+<!-- Filtros -->
+<section class="py-6 bg-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="flex flex-wrap justify-center gap-3" data-aos="fade-up">
+            <button class="btn btn-sm bg-primary text-white border-none prod-filter filter-active" data-section="all">Todas</button>
+            <button class="btn btn-sm btn-outline border-slate-300 text-slate-600 hover:bg-primary hover:text-white hover:border-primary prod-filter" data-section="publicaciones">Publicaciones</button>
+            <button class="btn btn-sm btn-outline border-slate-300 text-slate-600 hover:bg-primary hover:text-white hover:border-primary prod-filter" data-section="tesis">Tesis</button>
+            <button class="btn btn-sm btn-outline border-slate-300 text-slate-600 hover:bg-primary hover:text-white hover:border-primary prod-filter" data-section="desarrollos">Desarrollos aplicados</button>
         </div>
+    </div>
+</section>
 
-        <!-- LIBROS -->
-        <div id="tab-libros" class="tab-panel hidden">
-            <h3 class="text-primary font-semibold text-xl mb-6">Libros</h3>
-            <div class="border-l-4 border-secondary pl-4 mb-6">
-                <h4 class="font-semibold text-base-content text-sm">Encyclopedia of Modern Optics II (capítulo)</h4>
-                <p class="text-xs text-slate-500 mt-1">E.A. Marengo, M. Zambrano, E.S. Galagarza</p>
-                <p class="text-xs text-slate-400">Elsevier — 2017</p>
-            </div>
-            <div class="border-l-4 border-secondary pl-4 mb-6">
-                <h4 class="font-semibold text-base-content text-sm">Fundamentos de Ingeniería de Comunicación</h4>
-                <p class="text-xs text-slate-500 mt-1">C. Medina</p>
-                <p class="text-xs text-slate-400">Editorial Tecnológica UTP — 2012 | ISBN 978-9962-5534-1-0</p>
+<!-- PUBLICACIONES -->
+<section class="py-16 bg-slate-50 prod-section" data-section="publicaciones">
+    <div class="max-w-7xl mx-auto px-6">
+
+        <!-- Más recientes — Carousel -->
+        <div class="flex items-center justify-between mb-8" data-aos="fade-up">
+            <h2 class="text-slate-800 font-semibold text-2xl">Más Recientes</h2>
+            <div class="flex gap-2">
+                <button class="btn btn-sm btn-circle btn-outline border-slate-300 text-slate-500 hover:bg-primary hover:text-white hover:border-primary carousel-prev" data-target="carousel-recientes">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+                </button>
+                <button class="btn btn-sm btn-circle btn-outline border-slate-300 text-slate-500 hover:bg-primary hover:text-white hover:border-primary carousel-next" data-target="carousel-recientes">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                </button>
             </div>
         </div>
-
-        <!-- TESIS -->
-        <div id="tab-tesis" class="tab-panel hidden">
-            <h3 class="text-primary font-semibold text-xl mb-6">Tesis de Pregrado</h3>
+        <div id="carousel-recientes" class="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide mb-16 scroll-smooth" data-aos="fade-up">
             <?php
-            $tesis = [
-                ['Sistema de comunicación por luz visible (VLC)', '2016'],
-                ['Red de sensores inalámbricos para monitoreo ambiental', '2015'],
-                ['Análisis de transmisión de televisión digital', '2015'],
-                ['Modelado y análisis de códigos LDPC', '2014'],
-                ['Reconstrucción de señales mediante sensado compresivo', '2014'],
-                ['Diseño de carro radio-controlado', '2013'],
-                ['Reconocimiento de gestos de mano por computadora', '2012'],
-                ['Simulador de sistemas DSSS-CDMA', '2010'],
-            ];
-            foreach ($tesis as $t) :
+            $recientes_q = new WP_Query([
+                'post_type' => 'publicacion', 'posts_per_page' => 6,
+                'tax_query' => [['taxonomy' => 'tipo_publicacion', 'field' => 'slug', 'terms' => ['articulo', 'libro']]],
+                'orderby' => 'meta_value_num', 'meta_key' => 'pub_anio', 'order' => 'DESC',
+            ]);
+            if ($recientes_q->have_posts()) :
+                while ($recientes_q->have_posts()) : $recientes_q->the_post();
+                    $autores = get_post_meta(get_the_ID(), 'pub_autores', true);
+                    $revista = get_post_meta(get_the_ID(), 'pub_revista', true);
+                    $anio = get_post_meta(get_the_ID(), 'pub_anio', true);
+                    $doi = get_post_meta(get_the_ID(), 'pub_doi', true);
             ?>
-                <div class="border-l-4 border-accent pl-4 mb-6">
-                    <h4 class="font-semibold text-base-content text-sm"><?php echo $t[0]; ?></h4>
-                    <p class="text-xs text-slate-400">Pregrado en Ingeniería Electrónica — <?php echo $t[1]; ?></p>
+            <a href="<?php echo esc_url($doi); ?>" target="_blank" class="card bg-white border border-slate-200 hover:border-primary/30 hover:shadow-md transition-all min-w-[320px] max-w-[360px] snap-start flex-shrink-0 group">
+                <div class="card-body p-6">
+                    <span class="badge badge-sm font-medium text-white py-2.5 px-3 mb-2" style="background-color:#495C9B;border-color:#495C9B"><?php echo esc_html($anio); ?></span>
+                    <h4 class="text-sm font-semibold text-slate-800 leading-snug group-hover:text-primary transition-colors"><?php echo esc_html(get_the_title()); ?></h4>
+                    <p class="text-xs text-slate-500 mt-2"><?php echo esc_html($autores); ?></p>
+                    <p class="text-xs text-slate-400 mt-1"><?php echo esc_html($revista); ?></p>
+                    <span class="text-primary text-xs font-medium mt-2 group-hover:underline">Ver publicación →</span>
                 </div>
-            <?php endforeach; ?>
+            </a>
+            <?php
+                endwhile;
+            endif;
+            wp_reset_postdata();
+            ?>
         </div>
 
-        <!-- CONFERENCIAS NACIONALES -->
-        <div id="tab-conferencias" class="tab-panel hidden">
-            <h3 class="text-primary font-semibold text-xl mb-6">Conferencias Nacionales (APANAC)</h3>
+        <!-- Más citadas — Carousel -->
+        <div class="flex items-center justify-between mb-8" data-aos="fade-up">
+            <h2 class="text-slate-800 font-semibold text-2xl">Más Citadas</h2>
+            <div class="flex gap-2">
+                <button class="btn btn-sm btn-circle btn-outline border-slate-300 text-slate-500 hover:bg-primary hover:text-white hover:border-primary carousel-prev" data-target="carousel-citadas">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+                </button>
+                <button class="btn btn-sm btn-circle btn-outline border-slate-300 text-slate-500 hover:bg-primary hover:text-white hover:border-primary carousel-next" data-target="carousel-citadas">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                </button>
+            </div>
+        </div>
+        <div id="carousel-citadas" class="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide mb-16 scroll-smooth" data-aos="fade-up">
             <?php
-            $conf = [
-                ['Modelado de parásitos de malaria', 'APANAC — 2016'],
-                ['Modelado de eritrocitos', 'APANAC — 2016'],
-                ['Propiedades de sangre para microscopía', 'APANAC — 2016'],
-                ['Códigos LDPC para comunicaciones', 'APANAC — 2014'],
-                ['Estimación de posición de blancos', 'APANAC — 2014'],
-                ['Localización por muestreo compresivo MIMO', 'APANAC — 2012'],
-                ['Análisis de señales para telecomunicaciones', 'APANAC — 2012'],
-            ];
-            foreach ($conf as $c) :
+            $citadas_q = new WP_Query([
+                'post_type' => 'publicacion', 'posts_per_page' => 6,
+                'meta_query' => [['key' => 'pub_destacada', 'value' => 'si']],
+                'orderby' => 'meta_value_num', 'meta_key' => 'pub_citaciones', 'order' => 'DESC',
+            ]);
+            if ($citadas_q->have_posts()) :
+                while ($citadas_q->have_posts()) : $citadas_q->the_post();
+                    $autores = get_post_meta(get_the_ID(), 'pub_autores', true);
+                    $revista = get_post_meta(get_the_ID(), 'pub_revista', true);
+                    $anio = get_post_meta(get_the_ID(), 'pub_anio', true);
+                    $doi = get_post_meta(get_the_ID(), 'pub_doi', true);
             ?>
-                <div class="border-l-4 border-neutral pl-4 mb-6">
-                    <h4 class="font-semibold text-base-content text-sm"><?php echo $c[0]; ?></h4>
-                    <p class="text-xs text-slate-400"><?php echo $c[1]; ?></p>
+            <a href="<?php echo esc_url($doi); ?>" target="_blank" class="card bg-white border border-slate-200 hover:border-primary/30 hover:shadow-md transition-all min-w-[320px] max-w-[360px] snap-start flex-shrink-0 group">
+                <div class="card-body p-6">
+                    <span class="badge badge-sm font-medium text-white py-2.5 px-3 mb-2" style="background-color:#495C9B;border-color:#495C9B"><?php echo esc_html($anio); ?></span>
+                    <h4 class="text-sm font-semibold text-slate-800 leading-snug group-hover:text-primary transition-colors"><?php echo esc_html(get_the_title()); ?></h4>
+                    <p class="text-xs text-slate-500 mt-2"><?php echo esc_html($autores); ?></p>
+                    <p class="text-xs text-slate-400 mt-1"><?php echo esc_html($revista); ?></p>
+                    <span class="text-primary text-xs font-medium mt-2 group-hover:underline">Ver publicación →</span>
                 </div>
-            <?php endforeach; ?>
+            </a>
+            <?php
+                endwhile;
+            endif;
+            wp_reset_postdata();
+            ?>
+        </div>
+
+        <!-- Lista completa -->
+        <h2 class="text-slate-800 font-semibold text-2xl mb-8" data-aos="fade-up">Lista Completa</h2>
+        <div class="space-y-4" data-aos="fade-up">
+            <?php
+            $todas_q = new WP_Query([
+                'post_type' => 'publicacion', 'posts_per_page' => -1,
+                'tax_query' => [['taxonomy' => 'tipo_publicacion', 'field' => 'slug', 'terms' => ['articulo', 'libro', 'conferencia-nacional']]],
+                'orderby' => 'meta_value_num', 'meta_key' => 'pub_anio', 'order' => 'DESC',
+            ]);
+            if ($todas_q->have_posts()) :
+                while ($todas_q->have_posts()) : $todas_q->the_post();
+                    $autores = get_post_meta(get_the_ID(), 'pub_autores', true);
+                    $revista = get_post_meta(get_the_ID(), 'pub_revista', true);
+                    $anio = get_post_meta(get_the_ID(), 'pub_anio', true);
+                    $doi = get_post_meta(get_the_ID(), 'pub_doi', true);
+            ?>
+            <a href="<?php echo esc_url($doi); ?>" target="_blank" class="flex gap-4 items-start p-4 bg-white rounded-lg border border-slate-200 hover:border-primary/30 hover:shadow-sm transition-all group">
+                <span class="text-xs font-mono font-semibold mt-0.5 flex-shrink-0 badge badge-sm text-white py-2.5 px-3" style="background-color:#495C9B"><?php echo esc_html($anio); ?></span>
+                <div class="flex-1">
+                    <h4 class="text-sm font-medium text-slate-800 group-hover:text-primary transition-colors"><?php echo esc_html(get_the_title()); ?></h4>
+                    <p class="text-xs text-slate-500 mt-1"><?php echo esc_html($autores); ?> — <span class="text-slate-400"><?php echo esc_html($revista); ?></span></p>
+                </div>
+                <svg class="w-4 h-4 text-slate-400 group-hover:text-primary flex-shrink-0 mt-1 transition-colors" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+            </a>
+            <?php
+                endwhile;
+            endif;
+            wp_reset_postdata();
+            ?>
+        </div>
+    </div>
+</section>
+
+<!-- TESIS -->
+<section class="py-16 bg-white prod-section" data-section="tesis">
+    <div class="max-w-7xl mx-auto px-6">
+        <h2 class="text-slate-800 font-semibold text-2xl mb-8" data-aos="fade-up">Tesis</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <?php
+            $tesis_q = new WP_Query([
+                'post_type' => 'publicacion', 'posts_per_page' => -1,
+                'tax_query' => [['taxonomy' => 'tipo_publicacion', 'field' => 'slug', 'terms' => 'tesis']],
+                'orderby' => 'meta_value_num', 'meta_key' => 'pub_anio', 'order' => 'DESC',
+            ]);
+            $t_index = 0;
+            if ($tesis_q->have_posts()) :
+                while ($tesis_q->have_posts()) : $tesis_q->the_post();
+                    $autores = get_post_meta(get_the_ID(), 'pub_autores', true);
+                    $director = get_post_meta(get_the_ID(), 'pub_director', true);
+                    $nivel = get_post_meta(get_the_ID(), 'pub_nivel', true);
+                    $anio = get_post_meta(get_the_ID(), 'pub_anio', true);
+            ?>
+            <div class="card bg-white border border-slate-200 hover:border-primary/30 transition-colors" data-aos="fade-up" data-aos-delay="<?php echo ($t_index % 2) * 60; ?>">
+                <div class="card-body p-6">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="badge badge-sm font-medium text-white py-2.5 px-3" style="background-color:#7365AA"><?php echo esc_html($anio); ?></span>
+                        <?php if ($nivel) : ?>
+                            <span class="badge badge-sm badge-outline border-slate-300 text-slate-500 py-2.5 px-3"><?php echo esc_html($nivel); ?></span>
+                        <?php endif; ?>
+                    </div>
+                    <h4 class="text-sm font-semibold text-slate-800"><?php echo esc_html(get_the_title()); ?></h4>
+                    <?php if ($autores) : ?>
+                        <p class="text-xs text-slate-500 mt-2"><?php echo esc_html($autores); ?></p>
+                    <?php endif; ?>
+                    <?php if ($director) : ?>
+                        <p class="text-xs text-slate-400"><?php echo esc_html($director); ?></p>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <?php
+                    $t_index++;
+                endwhile;
+            endif;
+            wp_reset_postdata();
+            ?>
+        </div>
+    </div>
+</section>
+
+<!-- DESARROLLOS APLICADOS -->
+<section class="py-16 bg-slate-50 prod-section" data-section="desarrollos">
+    <div class="max-w-7xl mx-auto px-6">
+        <h2 class="text-slate-800 font-semibold text-2xl mb-8" data-aos="fade-up">Desarrollos Aplicados</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <?php
+            $dev_q = new WP_Query([
+                'post_type' => 'publicacion', 'posts_per_page' => -1,
+                'tax_query' => [['taxonomy' => 'tipo_publicacion', 'field' => 'slug', 'terms' => 'desarrollo']],
+                'orderby' => 'meta_value_num', 'meta_key' => 'pub_anio', 'order' => 'DESC',
+            ]);
+            $d_index = 0;
+            if ($dev_q->have_posts()) :
+                while ($dev_q->have_posts()) : $dev_q->the_post();
+                    $estado = get_post_meta(get_the_ID(), 'pub_estado', true);
+                    $anio = get_post_meta(get_the_ID(), 'pub_anio', true);
+            ?>
+            <div class="card bg-white border border-slate-200 hover:shadow-md transition-all" data-aos="fade-up" data-aos-delay="<?php echo ($d_index % 3) * 60; ?>">
+                <div class="card-body p-7">
+                    <div class="flex items-center justify-between mb-3">
+                        <?php if ($estado) : ?>
+                            <span class="badge badge-sm font-medium text-white py-3 px-4" style="background-color:#52975D"><?php echo esc_html($estado); ?></span>
+                        <?php endif; ?>
+                        <span class="text-xs font-mono text-slate-400"><?php echo esc_html($anio); ?></span>
+                    </div>
+                    <h3 class="text-base font-semibold text-slate-800 mb-2"><?php echo esc_html(get_the_title()); ?></h3>
+                    <?php if (get_the_content()) : ?>
+                        <p class="text-sm text-slate-500 leading-relaxed"><?php echo wp_kses_post(get_the_content()); ?></p>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <?php
+                    $d_index++;
+                endwhile;
+            endif;
+            wp_reset_postdata();
+            ?>
         </div>
     </div>
 </section>

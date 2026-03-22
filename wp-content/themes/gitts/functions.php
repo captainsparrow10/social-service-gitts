@@ -13,19 +13,34 @@ function gitts_setup() {
 add_action('after_setup_theme', 'gitts_setup');
 
 function gitts_scripts() {
-    // Google Fonts — Inter
-    wp_enqueue_style('google-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap', [], null);
+    // Myriad Pro loaded via @font-face in style.css
     // Tailwind + DaisyUI via CDN
     wp_enqueue_style('daisyui', 'https://cdn.jsdelivr.net/npm/daisyui@4/dist/full.min.css', [], '4.0');
-    wp_enqueue_script('tailwind', 'https://cdn.tailwindcss.com', [], null, false);
+    // Tailwind CDN loaded directly in header.php before config
     // Animate on Scroll
     wp_enqueue_style('aos-css', 'https://unpkg.com/aos@2.3.1/dist/aos.css', [], null);
     wp_enqueue_script('aos-js', 'https://unpkg.com/aos@2.3.1/dist/aos.js', [], null, true);
+    // GLightbox (lightbox para galería)
+    wp_enqueue_style('glightbox-css', 'https://cdn.jsdelivr.net/npm/glightbox@3.2.0/dist/css/glightbox.min.css', [], '3.2.0');
+    wp_enqueue_script('glightbox-js', 'https://cdn.jsdelivr.net/npm/glightbox@3.2.0/dist/js/glightbox.min.js', [], '3.2.0', true);
     // Theme
     wp_enqueue_style('gitts-style', get_stylesheet_uri(), [], '4.0');
-    wp_enqueue_script('gitts-main', get_template_directory_uri() . '/js/main.js', ['aos-js'], '4.0', true);
+    wp_enqueue_script('gitts-main', get_template_directory_uri() . '/js/main.js', ['aos-js', 'glightbox-js'], '4.0', true);
 }
 add_action('wp_enqueue_scripts', 'gitts_scripts');
+
+// Remove WordPress core block/global styles that conflict with Tailwind/DaisyUI
+function gitts_remove_wp_block_styles() {
+    wp_dequeue_style('wp-block-library');
+    wp_dequeue_style('wp-block-library-theme');
+    wp_dequeue_style('global-styles');
+    wp_dequeue_style('classic-theme-styles');
+    wp_deregister_style('global-styles');
+    wp_deregister_style('classic-theme-styles');
+}
+add_action('wp_enqueue_scripts', 'gitts_remove_wp_block_styles', 100);
+remove_action('wp_enqueue_scripts', 'wp_enqueue_global_styles');
+remove_action('wp_body_open', 'wp_global_styles_render_svg_filters');
 
 // Tailwind config + DaisyUI custom theme
 function gitts_tailwind_config() { ?>
@@ -36,8 +51,13 @@ tailwind.config = {
             colors: {
                 'baleine': '#165288',
                 'baleine-dark': '#0e3a5f',
-                'hibiscus': '#DE3848',
-                'mgreen': '#3C824E',
+                'hibiscus': '#E83C56',
+                'mgreen': '#52975D',
+                'indigo': '#495C9B',
+                'purple-mid': '#7365AA',
+                'orchid': '#9C6DB4',
+                'pink-soft': '#C474B9',
+                'pink-light': '#E97DB9',
                 'slate': {
                     50: '#F8FAFC', 100: '#F1F5F9', 200: '#E2E8F0',
                     300: '#CBD5E1', 400: '#94A3B8', 500: '#64748B',
@@ -45,7 +65,7 @@ tailwind.config = {
                 },
             },
             fontFamily: {
-                'sans': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                'sans': ['"Myriad Pro"', 'system-ui', '-apple-system', 'sans-serif'],
             }
         }
     }
@@ -57,10 +77,10 @@ tailwind.config = {
     --p: 0.389 0.106 243.35;     /* #165288 navy */
     --pf: 0.299 0.082 241.5;     /* #0E3A5F navy dark */
     --pc: 0.965 0.005 90;        /* #F8F8F4 warm off-white */
-    --s: 0.512 0.112 152.8;      /* #3C824E green */
+    --s: 0.512 0.112 152.8;      /* #52975D green */
     --sf: 0.432 0.098 151.5;     /* #2D6A3D green dark */
     --sc: 0.965 0.005 90;        /* #F8F8F4 */
-    --a: 0.546 0.191 22.5;       /* #DE3848 hibiscus */
+    --a: 0.546 0.191 22.5;       /* #E83C56 hibiscus */
     --af: 0.478 0.172 21.8;      /* #C42F3D hibiscus dark */
     --ac: 1.0 0.0 0;             /* #FFFFFF */
     --n: 0.554 0.022 250;        /* #64748B slate-500 */
@@ -118,6 +138,84 @@ function gitts_register_cpts() {
         'rewrite' => ['slug' => 'equipo'],
         'show_in_rest' => true,
     ]);
+
+    // Publicación científica
+    register_post_type('publicacion', [
+        'labels' => ['name' => 'Publicaciones', 'singular_name' => 'Publicación', 'add_new_item' => 'Nueva Publicación', 'edit_item' => 'Editar Publicación'],
+        'public' => true, 'has_archive' => false, 'menu_icon' => 'dashicons-book-alt',
+        'supports' => ['title', 'editor', 'thumbnail'], 'show_in_rest' => true,
+        'rewrite' => ['slug' => 'publicaciones'],
+    ]);
+
+    // Valor institucional
+    register_post_type('valor', [
+        'labels' => ['name' => 'Valores', 'singular_name' => 'Valor', 'add_new_item' => 'Nuevo Valor'],
+        'public' => true, 'has_archive' => false, 'menu_icon' => 'dashicons-heart',
+        'supports' => ['title', 'thumbnail'], 'show_in_rest' => true,
+    ]);
+
+    // Línea de investigación
+    register_post_type('linea_inv', [
+        'labels' => ['name' => 'Líneas de Investigación', 'singular_name' => 'Línea', 'add_new_item' => 'Nueva Línea'],
+        'public' => true, 'has_archive' => false, 'menu_icon' => 'dashicons-lightbulb',
+        'supports' => ['title', 'thumbnail'], 'show_in_rest' => true,
+    ]);
+
+    // Laboratorio
+    register_post_type('laboratorio', [
+        'labels' => ['name' => 'Laboratorios', 'singular_name' => 'Laboratorio', 'add_new_item' => 'Nuevo Laboratorio'],
+        'public' => true, 'has_archive' => false, 'menu_icon' => 'dashicons-building',
+        'supports' => ['title', 'editor', 'thumbnail'], 'show_in_rest' => true,
+    ]);
+
+    // Equipamiento
+    register_post_type('equipo_lab', [
+        'labels' => ['name' => 'Equipamiento', 'singular_name' => 'Equipo', 'add_new_item' => 'Nuevo Equipo'],
+        'public' => true, 'has_archive' => false, 'menu_icon' => 'dashicons-hammer',
+        'supports' => ['title'], 'show_in_rest' => true,
+    ]);
+
+    // Capacidad técnica
+    register_post_type('capacidad', [
+        'labels' => ['name' => 'Capacidades', 'singular_name' => 'Capacidad', 'add_new_item' => 'Nueva Capacidad'],
+        'public' => true, 'has_archive' => false, 'menu_icon' => 'dashicons-performance',
+        'supports' => ['title'], 'show_in_rest' => true,
+    ]);
+
+    // Servicio institucional
+    register_post_type('servicio', [
+        'labels' => ['name' => 'Servicios', 'singular_name' => 'Servicio', 'add_new_item' => 'Nuevo Servicio'],
+        'public' => true, 'has_archive' => false, 'menu_icon' => 'dashicons-portfolio',
+        'supports' => ['title'], 'show_in_rest' => true,
+    ]);
+
+    // Forma de colaboración
+    register_post_type('colaboracion', [
+        'labels' => ['name' => 'Colaboraciones', 'singular_name' => 'Colaboración', 'add_new_item' => 'Nueva Colaboración'],
+        'public' => true, 'has_archive' => false, 'menu_icon' => 'dashicons-groups',
+        'supports' => ['title'], 'show_in_rest' => true,
+    ]);
+
+    // Aplicación
+    register_post_type('aplicacion', [
+        'labels' => ['name' => 'Aplicaciones', 'singular_name' => 'Aplicación', 'add_new_item' => 'Nueva Aplicación'],
+        'public' => true, 'has_archive' => false, 'menu_icon' => 'dashicons-admin-site-alt3',
+        'supports' => ['title'], 'show_in_rest' => true,
+    ]);
+
+    // Tag de especialización
+    register_post_type('especializacion', [
+        'labels' => ['name' => 'Especializaciones', 'singular_name' => 'Especialización', 'add_new_item' => 'Nueva Especialización'],
+        'public' => true, 'has_archive' => false, 'menu_icon' => 'dashicons-tag',
+        'supports' => ['title'], 'show_in_rest' => true,
+    ]);
+
+    // Objetivo institucional
+    register_post_type('objetivo', [
+        'labels' => ['name' => 'Objetivos', 'singular_name' => 'Objetivo', 'add_new_item' => 'Nuevo Objetivo'],
+        'public' => true, 'has_archive' => false, 'menu_icon' => 'dashicons-flag',
+        'supports' => ['title'], 'show_in_rest' => true,
+    ]);
 }
 add_action('init', 'gitts_register_cpts');
 
@@ -127,6 +225,11 @@ function gitts_register_taxonomies() {
         'labels' => ['name' => 'Tipo de Miembro', 'singular_name' => 'Tipo'],
         'hierarchical' => true, 'show_in_rest' => true,
     ]);
+
+    register_taxonomy('tipo_publicacion', 'publicacion', [
+        'labels' => ['name' => 'Tipo de Publicación', 'singular_name' => 'Tipo'],
+        'hierarchical' => true, 'show_in_rest' => true,
+    ]);
 }
 add_action('init', 'gitts_register_taxonomies');
 
@@ -134,6 +237,15 @@ add_action('init', 'gitts_register_taxonomies');
 function gitts_meta_boxes() {
     add_meta_box('proyecto_fields', 'Campos del Proyecto', 'gitts_proyecto_fields_cb', 'proyecto', 'normal', 'high');
     add_meta_box('miembro_fields', 'Campos del Miembro', 'gitts_miembro_fields_cb', 'miembro', 'normal', 'high');
+    add_meta_box('publicacion_fields', 'Campos de Publicación', 'gitts_publicacion_fields_cb', 'publicacion', 'normal', 'high');
+    add_meta_box('valor_fields', 'Campos del Valor', 'gitts_simple_fields_cb', 'valor', 'normal', 'high');
+    add_meta_box('linea_fields', 'Campos de Línea', 'gitts_simple_fields_cb', 'linea_inv', 'normal', 'high');
+    add_meta_box('lab_fields', 'Campos del Laboratorio', 'gitts_lab_fields_cb', 'laboratorio', 'normal', 'high');
+    add_meta_box('equipo_fields', 'Campos del Equipo', 'gitts_simple_fields_cb', 'equipo_lab', 'normal', 'high');
+    add_meta_box('capacidad_fields', 'Campos de Capacidad', 'gitts_simple_fields_cb', 'capacidad', 'normal', 'high');
+    add_meta_box('servicio_fields', 'Campos del Servicio', 'gitts_simple_fields_cb', 'servicio', 'normal', 'high');
+    add_meta_box('colaboracion_fields', 'Campos de Colaboración', 'gitts_simple_fields_cb', 'colaboracion', 'normal', 'high');
+    add_meta_box('objetivo_fields', 'Campos del Objetivo', 'gitts_simple_fields_cb', 'objetivo', 'normal', 'high');
 }
 add_action('add_meta_boxes', 'gitts_meta_boxes');
 
@@ -143,8 +255,17 @@ function gitts_proyecto_fields_cb($post) {
         'fecha_inicio' => 'Fecha de Inicio',
         'fecha_fin' => 'Fecha de Fin (vacío si en curso)',
         'estado_proyecto' => 'Estado (En progreso / Concluido / Pausado)',
-        'investigadores_asignados' => 'Investigadores Asignados',
-        'entidades_financiadoras' => 'Entidades Financiadoras',
+        'investigador_principal' => 'Investigador Principal',
+        'co_investigadores' => 'Co-investigadores (separados por coma)',
+        'investigadores_asignados' => 'Otros investigadores',
+        'organismo_financiador' => 'Organismo Financiador (ej: SENACYT)',
+        'organismo_ejecutor' => 'Organismo Ejecutor (ej: CEMCIT-AIP)',
+        'codigo_proyecto' => 'Código del Proyecto (ej: FID 2018 096)',
+        'entidades_financiadoras' => 'Entidades Financiadoras (detalle)',
+        'duracion' => 'Duración (ej: 26 meses)',
+        'monto_total' => 'Monto Total (ej: B/. 99,996.85)',
+        'contacto_email' => 'Email de contacto',
+        'galeria_imagenes' => 'Galería (URLs de imágenes separadas por coma)',
     ];
     foreach ($fields as $k => $label) {
         $v = get_post_meta($post->ID, $k, true);
@@ -160,6 +281,10 @@ function gitts_miembro_fields_cb($post) {
         'link_linkedin' => 'LinkedIn URL',
         'link_orcid' => 'ORCID URL',
         'link_researchgate' => 'ResearchGate URL',
+        'link_apersei' => 'Alpha Persei URL',
+        'link_scholar' => 'Google Scholar URL',
+        'bio_extendida' => 'Biografía extendida',
+        'orden' => 'Orden de aparición (número)',
     ];
     foreach ($fields as $k => $label) {
         $v = get_post_meta($post->ID, $k, true);
@@ -167,9 +292,61 @@ function gitts_miembro_fields_cb($post) {
     }
 }
 
+function gitts_publicacion_fields_cb($post) {
+    wp_nonce_field('gitts_save', 'gitts_nonce');
+    $fields = [
+        'pub_autores' => 'Autores',
+        'pub_revista' => 'Revista / Conferencia',
+        'pub_anio' => 'Año',
+        'pub_doi' => 'Link DOI / IEEE',
+        'pub_director' => 'Director (solo tesis)',
+        'pub_nivel' => 'Nivel (Pregrado/Maestría — solo tesis)',
+        'pub_estado' => 'Estado (solo desarrollos)',
+        'pub_destacada' => 'Destacada (si/no)',
+        'pub_citaciones' => 'Número de citaciones',
+    ];
+    foreach ($fields as $k => $label) {
+        $v = get_post_meta($post->ID, $k, true);
+        echo "<p><strong>{$label}:</strong><br><input type='text' name='{$k}' value='" . esc_attr($v) . "' class='widefat'></p>";
+    }
+}
+
+function gitts_simple_fields_cb($post) {
+    wp_nonce_field('gitts_save', 'gitts_nonce');
+    $v = get_post_meta($post->ID, 'descripcion', true);
+    echo "<p><strong>Descripción:</strong><br><textarea name='descripcion' class='widefat' rows='4'>" . esc_textarea($v) . "</textarea></p>";
+    $o = get_post_meta($post->ID, 'orden', true);
+    echo "<p><strong>Orden (número):</strong><br><input type='number' name='orden' value='" . esc_attr($o) . "' class='small-text'></p>";
+}
+
+function gitts_lab_fields_cb($post) {
+    wp_nonce_field('gitts_save', 'gitts_nonce');
+    $desc = get_post_meta($post->ID, 'lab_descripcion', true);
+    echo "<p><strong>Descripción:</strong><br><textarea name='lab_descripcion' class='widefat' rows='3'>" . esc_textarea($desc) . "</textarea></p>";
+    $equip = get_post_meta($post->ID, 'lab_equipamiento', true);
+    echo "<p><strong>Equipamiento (uno por línea):</strong><br><textarea name='lab_equipamiento' class='widefat' rows='5'>" . esc_textarea($equip) . "</textarea></p>";
+    $o = get_post_meta($post->ID, 'orden', true);
+    echo "<p><strong>Orden:</strong><br><input type='number' name='orden' value='" . esc_attr($o) . "' class='small-text'></p>";
+}
+
 function gitts_save_fields($post_id) {
     if (!isset($_POST['gitts_nonce']) || !wp_verify_nonce($_POST['gitts_nonce'], 'gitts_save')) return;
-    $all = ['fecha_inicio','fecha_fin','estado_proyecto','investigadores_asignados','entidades_financiadoras','cargo_oficial','email_institucional','link_linkedin','link_orcid','link_researchgate'];
+    $all = [
+        // proyecto
+        'fecha_inicio','fecha_fin','estado_proyecto','investigador_principal','co_investigadores',
+        'investigadores_asignados','organismo_financiador','organismo_ejecutor','codigo_proyecto',
+        'entidades_financiadoras','duracion','monto_total','contacto_email','galeria_imagenes',
+        // miembro
+        'cargo_oficial','email_institucional','link_linkedin','link_orcid','link_researchgate',
+        'link_apersei','link_scholar','bio_extendida','orden',
+        // publicacion
+        'pub_autores','pub_revista','pub_anio','pub_doi','pub_director','pub_nivel',
+        'pub_estado','pub_destacada','pub_citaciones',
+        // simple fields (shared)
+        'descripcion',
+        // laboratorio
+        'lab_descripcion','lab_equipamiento',
+    ];
     foreach ($all as $f) {
         if (isset($_POST[$f])) update_post_meta($post_id, $f, sanitize_text_field($_POST[$f]));
     }
@@ -184,14 +361,14 @@ add_action('save_post', 'gitts_save_fields');
 function gitts_login_styles() { ?>
 <style>
     body.login {
-        background: linear-gradient(135deg, #0F172A 0%, #165288 60%, #1a6bb5 100%);
+        background: linear-gradient(135deg, #0F172A 0%, #165288 60%, #495C9B 100%);
         font-family: 'Inter', system-ui, sans-serif;
     }
     #login {
         padding-top: 6%;
     }
     .login h1 a {
-        background-image: url('<?php echo get_template_directory_uri(); ?>/assets/img/logo-digital.png');
+        background-image: url('<?php echo get_template_directory_uri(); ?>/assets/img/brand/logo-digital.png');
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center;
@@ -319,9 +496,9 @@ function gitts_admin_styles() { ?>
     #dashboard-widgets .postbox-header h2 { color: #1E293B; }
 
     /* Notices */
-    .notice-success { border-left-color: #3C824E; }
+    .notice-success { border-left-color: #52975D; }
     .notice-info { border-left-color: #165288; }
-    .notice-error { border-left-color: #DE3848; }
+    .notice-error { border-left-color: #E83C56; }
 
     /* Footer */
     #wpfooter { color: #94A3B8; }
@@ -355,18 +532,18 @@ function gitts_welcome_widget() {
                 <div style="font-size:12px;color:#64748B;margin-top:4px;">Miembros</div>
             </div>
             <div style="background:#F0FAF3;border-radius:8px;padding:16px;text-align:center;">
-                <div style="font-size:28px;font-weight:600;color:#3C824E;"><?php echo $proyectos->publish; ?></div>
+                <div style="font-size:28px;font-weight:600;color:#52975D;"><?php echo $proyectos->publish; ?></div>
                 <div style="font-size:12px;color:#64748B;margin-top:4px;">Proyectos</div>
             </div>
             <div style="background:#FFF5F5;border-radius:8px;padding:16px;text-align:center;">
-                <div style="font-size:28px;font-weight:600;color:#DE3848;"><?php echo $posts->publish; ?></div>
+                <div style="font-size:28px;font-weight:600;color:#E83C56;"><?php echo $posts->publish; ?></div>
                 <div style="font-size:12px;color:#64748B;margin-top:4px;">Noticias</div>
             </div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <a href="<?php echo admin_url('post-new.php?post_type=miembro'); ?>" style="display:inline-flex;align-items:center;gap:6px;background:#165288;color:#fff;padding:8px 16px;border-radius:6px;text-decoration:none;font-size:13px;font-weight:500;">+ Nuevo Miembro</a>
-            <a href="<?php echo admin_url('post-new.php?post_type=proyecto'); ?>" style="display:inline-flex;align-items:center;gap:6px;background:#3C824E;color:#fff;padding:8px 16px;border-radius:6px;text-decoration:none;font-size:13px;font-weight:500;">+ Nuevo Proyecto</a>
-            <a href="<?php echo admin_url('post-new.php'); ?>" style="display:inline-flex;align-items:center;gap:6px;background:#DE3848;color:#fff;padding:8px 16px;border-radius:6px;text-decoration:none;font-size:13px;font-weight:500;">+ Nueva Noticia</a>
+            <a href="<?php echo admin_url('post-new.php?post_type=proyecto'); ?>" style="display:inline-flex;align-items:center;gap:6px;background:#52975D;color:#fff;padding:8px 16px;border-radius:6px;text-decoration:none;font-size:13px;font-weight:500;">+ Nuevo Proyecto</a>
+            <a href="<?php echo admin_url('post-new.php'); ?>" style="display:inline-flex;align-items:center;gap:6px;background:#E83C56;color:#fff;padding:8px 16px;border-radius:6px;text-decoration:none;font-size:13px;font-weight:500;">+ Nueva Noticia</a>
         </div>
     </div>
     <?php
@@ -387,3 +564,51 @@ function gitts_clean_admin_menu() {
     remove_menu_page('edit-comments.php');
 }
 add_action('admin_menu', 'gitts_clean_admin_menu');
+
+// ── Theme Options Page ──
+function gitts_theme_options_page() {
+    add_menu_page('GITTS Settings', 'GITTS Settings', 'manage_options', 'gitts-settings', 'gitts_settings_render', 'dashicons-admin-generic', 3);
+}
+add_action('admin_menu', 'gitts_theme_options_page');
+
+function gitts_settings_render() {
+    if (isset($_POST['gitts_settings_nonce']) && wp_verify_nonce($_POST['gitts_settings_nonce'], 'gitts_settings_save')) {
+        $opts = ['gitts_mision','gitts_vision','gitts_telefono','gitts_email_contacto','gitts_direccion','gitts_campus','gitts_hero_titulo','gitts_hero_subtitulo','gitts_intro_quienes','gitts_intro_unete','gitts_intro_miembros','gitts_intro_produccion','gitts_intro_infraestructura','gitts_intro_investigacion'];
+        foreach ($opts as $opt) {
+            if (isset($_POST[$opt])) update_option($opt, wp_kses_post($_POST[$opt]));
+        }
+        echo '<div class="notice notice-success"><p>Configuración guardada.</p></div>';
+    }
+    ?>
+    <div class="wrap">
+        <h1>GITTS — Configuración del Tema</h1>
+        <form method="post">
+            <?php wp_nonce_field('gitts_settings_save', 'gitts_settings_nonce'); ?>
+            <h2>Hero del Home</h2>
+            <table class="form-table">
+                <tr><th>Título</th><td><input type="text" name="gitts_hero_titulo" value="<?php echo esc_attr(get_option('gitts_hero_titulo', '')); ?>" class="large-text"></td></tr>
+                <tr><th>Subtítulo</th><td><textarea name="gitts_hero_subtitulo" class="large-text" rows="2"><?php echo esc_textarea(get_option('gitts_hero_subtitulo', '')); ?></textarea></td></tr>
+            </table>
+            <h2>Contenido Institucional</h2>
+            <table class="form-table">
+                <tr><th>Misión</th><td><textarea name="gitts_mision" class="large-text" rows="4"><?php echo esc_textarea(get_option('gitts_mision', '')); ?></textarea></td></tr>
+                <tr><th>Visión</th><td><textarea name="gitts_vision" class="large-text" rows="4"><?php echo esc_textarea(get_option('gitts_vision', '')); ?></textarea></td></tr>
+                <tr><th>Intro Quiénes Somos</th><td><textarea name="gitts_intro_quienes" class="large-text" rows="4"><?php echo esc_textarea(get_option('gitts_intro_quienes', '')); ?></textarea></td></tr>
+                <tr><th>Intro Únete</th><td><textarea name="gitts_intro_unete" class="large-text" rows="4"><?php echo esc_textarea(get_option('gitts_intro_unete', '')); ?></textarea></td></tr>
+                <tr><th>Intro Miembros</th><td><textarea name="gitts_intro_miembros" class="large-text" rows="3"><?php echo esc_textarea(get_option('gitts_intro_miembros', '')); ?></textarea></td></tr>
+                <tr><th>Intro Producción</th><td><textarea name="gitts_intro_produccion" class="large-text" rows="3"><?php echo esc_textarea(get_option('gitts_intro_produccion', '')); ?></textarea></td></tr>
+                <tr><th>Intro Infraestructura</th><td><textarea name="gitts_intro_infraestructura" class="large-text" rows="3"><?php echo esc_textarea(get_option('gitts_intro_infraestructura', '')); ?></textarea></td></tr>
+                <tr><th>Intro Investigación</th><td><textarea name="gitts_intro_investigacion" class="large-text" rows="3"><?php echo esc_textarea(get_option('gitts_intro_investigacion', '')); ?></textarea></td></tr>
+            </table>
+            <h2>Contacto (Footer + Únete)</h2>
+            <table class="form-table">
+                <tr><th>Teléfono</th><td><input type="text" name="gitts_telefono" value="<?php echo esc_attr(get_option('gitts_telefono', '')); ?>" class="regular-text"></td></tr>
+                <tr><th>Email</th><td><input type="text" name="gitts_email_contacto" value="<?php echo esc_attr(get_option('gitts_email_contacto', '')); ?>" class="regular-text"></td></tr>
+                <tr><th>Dirección</th><td><textarea name="gitts_direccion" class="large-text" rows="2"><?php echo esc_textarea(get_option('gitts_direccion', '')); ?></textarea></td></tr>
+                <tr><th>Campus</th><td><input type="text" name="gitts_campus" value="<?php echo esc_attr(get_option('gitts_campus', '')); ?>" class="regular-text"></td></tr>
+            </table>
+            <?php submit_button('Guardar Configuración'); ?>
+        </form>
+    </div>
+    <?php
+}

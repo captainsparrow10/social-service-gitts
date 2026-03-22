@@ -1,105 +1,112 @@
-<?php /* Template Name: Quiénes Somos */ get_header(); ?>
+<?php /* Template Name: Acerca de */ get_header(); ?>
 
-<section class="hero hero-small">
-    <div class="container">
-        <h1>¿Quiénes somos?</h1>
-        <p>En GITTS somos un equipo de investigadores dedicados a la ingeniería de las telecomunicaciones y el procesamiento de señales.</p>
+<!-- Header banner -->
+<div class="page-header py-20">
+    <div class="max-w-7xl mx-auto px-6" data-aos="fade-right">
+        <h1 class="text-white font-light text-4xl">¿Quiénes Somos?</h1>
+        <p class="text-slate-300 mt-3 text-lg font-light">En GITTS somos un equipo de investigadores dedicados a la ingeniería de las telecomunicaciones y el procesamiento de señales.</p>
     </div>
-</section>
+</div>
 
-<!-- DESCRIPCIÓN -->
-<section class="section">
-    <div class="container" style="max-width:800px;">
-        <p style="font-size:1.05rem;line-height:1.8;color:var(--text-gray);">
-            El Grupo de Investigación en Tecnologías Avanzadas de Telecomunicación y Procesamiento de Señales (GITTS) surge como una iniciativa estratégica para fortalecer las capacidades de investigación, innovación y formación de talento en áreas fundamentales para la ingeniería contemporánea.
-        </p>
-        <p style="font-size:1.05rem;line-height:1.8;color:var(--text-gray);margin-top:15px;">
-            El grupo articula de manera sostenida el trabajo científico en telecomunicaciones, procesamiento de señales, electrónica, sistemas de radiofrecuencia, sistemas ópticos, instrumentación y campos afines, integrando capacidades experimentales, analíticas y de diseño orientadas a la generación de conocimiento y al desarrollo de soluciones tecnológicas.
-        </p>
-    </div>
-</section>
-
-<!-- MISIÓN Y VISIÓN -->
-<section class="section section-alt">
-    <div class="container">
-        <div class="cards-grid cards-grid-2">
-            <div class="card">
-                <h3 style="font-size:1.4rem;">Misión</h3>
-                <p style="margin-top:15px;">Generar, validar y transferir conocimiento mediante investigación científica y desarrollo tecnológico en telecomunicaciones, procesamiento de señales y áreas afines. Con un enfoque científico riguroso y prototipos experimentales, GITTS transforma señales y datos en soluciones confiables, eficientes y seguras, formando talento e impulsando la innovación para atender retos relevantes en la industria, el sector público y la sociedad de manera sostenible.</p>
+<!-- Introducción -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
+            <div class="lg:col-span-3 space-y-5" data-aos="fade-up">
+                <h2 class="text-slate-800 font-semibold text-2xl mb-6">Sobre GITTS</h2>
+                <p class="text-slate-600 text-base leading-relaxed">El Grupo de Investigación en Tecnologías Avanzadas de Telecomunicación y Procesamiento de Señales (GITTS) surge como una iniciativa estratégica para fortalecer las capacidades de investigación, innovación y formación de talento en áreas fundamentales para la ingeniería contemporánea.</p>
+                <p class="text-slate-600 text-base leading-relaxed">El grupo articula de manera sostenida el trabajo científico en telecomunicaciones, procesamiento de señales, electrónica, sistemas de radiofrecuencia, sistemas ópticos, instrumentación y campos afines, integrando capacidades experimentales, analíticas y de diseño orientadas a la generación de conocimiento y al desarrollo de soluciones tecnológicas.</p>
+                <p class="text-slate-600 text-base leading-relaxed">Las telecomunicaciones y el procesamiento de señales constituyen hoy pilares esenciales del desarrollo económico y social. La conectividad segura y eficiente es un habilitador clave para sectores como la salud, la educación, la industria, la energía y el medio ambiente.</p>
+                <p class="text-slate-600 text-base leading-relaxed">A través de la investigación, la formación de estudiantes, la producción científica y el desarrollo de tecnologías, GITTS contribuye a consolidar una comunidad académica dinámica, fortalecer la colaboración con actores nacionales e internacionales y generar soluciones innovadoras con impacto en la sociedad.</p>
+                <p class="text-slate-500 text-base leading-relaxed">De esta manera, el grupo aporta al fortalecimiento de la capacidad científica y tecnológica de la Universidad y del país, promoviendo el desarrollo sostenible y la formación de profesionales altamente calificados.</p>
             </div>
-            <div class="card">
-                <h3 style="font-size:1.4rem;">Visión</h3>
-                <p style="margin-top:15px;">Ser un grupo de investigación de referencia en Panamá y la región, reconocido por la solidez de su trabajo científico-tecnológico y la pertinencia de sus líneas de investigación, así como por la calidad de su formación y su capacidad para liderar proyectos aplicados. GITTS aspira a consolidarse como un espacio de innovación y colaboración internacional, con impacto sostenido en el desarrollo científico, productivo y social.</p>
+            <div class="lg:col-span-2 lg:sticky lg:top-24" data-aos="fade-left">
+                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/team/quienes-somos.jpg" alt="Equipo GITTS en campo" class="rounded-xl w-full shadow-md">
             </div>
         </div>
     </div>
 </section>
 
-<!-- VALORES -->
-<section class="section">
-    <div class="container">
-        <h2 class="section-title">Nuestros Valores</h2>
-        <p class="section-subtitle">Los principios fundamentales que guían nuestro trabajo</p>
-        <div class="values-grid">
-            <div class="value-card">
-                <div class="icon">&#9878;</div>
-                <h4>Integridad y ética científica</h4>
-                <p>Honestidad, responsabilidad y transparencia en cada etapa de la investigación.</p>
+<!-- Misión y Visión -->
+<section class="py-20 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <!-- Misión -->
+            <div class="card bg-white" data-aos="fade-up">
+                <div class="card-body p-10">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
+                        </div>
+                        <h2 class="text-2xl font-semibold text-slate-800">Misión</h2>
+                    </div>
+                    <div class="text-slate-600 text-base leading-relaxed"><?php echo wp_kses_post(get_option('gitts_mision', 'Generar, validar y transferir conocimiento mediante investigación científica y desarrollo tecnológico en telecomunicaciones, procesamiento de señales y áreas afines (sensado electromagnético, instrumentación, electrónica, radiofrecuencia y óptica). Con un enfoque científico riguroso y prototipos experimentales, GITTS transforma señales y datos en soluciones confiables, eficientes y seguras, formando talento e impulsando la innovación para atender retos relevantes en la industria, el sector público y la sociedad de manera sostenible.')); ?></div>
+                </div>
             </div>
-            <div class="value-card">
-                <div class="icon">&#9733;</div>
-                <h4>Rigor y excelencia</h4>
-                <p>Calidad metodológica, validación experimental y mejora continua en nuestro trabajo.</p>
-            </div>
-            <div class="value-card">
-                <div class="icon">&#128161;</div>
-                <h4>Creatividad e innovación</h4>
-                <p>Aplicamos ideas novedosas con disciplina para convertirlas en tecnología útil.</p>
-            </div>
-            <div class="value-card">
-                <div class="icon">&#129309;</div>
-                <h4>Colaboración</h4>
-                <p>Proyectos interdisciplinarios e interinstitucionales que aprovechan fortalezas diversas.</p>
-            </div>
-            <div class="value-card">
-                <div class="icon">&#127758;</div>
-                <h4>Diversidad e inclusión</h4>
-                <p>Entorno diverso como fuente de creatividad y mejores soluciones.</p>
-            </div>
-            <div class="value-card">
-                <div class="icon">&#127793;</div>
-                <h4>Sostenibilidad</h4>
-                <p>Visión de largo plazo con eficiencia energética e impacto ambiental positivo.</p>
+            <!-- Visión -->
+            <div class="card bg-white" data-aos="fade-up" data-aos-delay="100">
+                <div class="card-body p-10">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-secondary" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        </div>
+                        <h2 class="text-2xl font-semibold text-slate-800">Visión</h2>
+                    </div>
+                    <div class="text-slate-600 text-base leading-relaxed"><?php echo wp_kses_post(get_option('gitts_vision', 'Ser un grupo de investigación de referencia en Panamá y la región, reconocido por la solidez de su trabajo científico-tecnológico y la pertinencia de sus líneas de investigación, así como por la calidad de su formación y su capacidad para liderar proyectos aplicados. GITTS aspira a consolidarse como un espacio de innovación y colaboración internacional, con impacto sostenido en el desarrollo científico, productivo y social (mejoras en telecomunicaciones, salud, energía, medio ambiente, etc.), actuando como puente entre la academia y la industria.')); ?></div>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- OBJETIVOS -->
-<section class="section section-alt">
-    <div class="container">
-        <h2 class="section-title">Objetivos</h2>
-        <div style="max-width:800px;margin:30px auto 0;">
-            <div style="display:flex;gap:15px;margin-bottom:20px;align-items:flex-start;">
-                <span style="background:var(--navy);color:white;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.85rem;font-weight:700;">1</span>
-                <p>Impulsar investigación de frontera en telecomunicaciones, procesamiento de señales, inteligencia artificial aplicada y tecnologías emergentes.</p>
+<!-- Valores -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+        <h2 class="text-slate-800 font-semibold text-3xl mb-12 text-center" data-aos="fade-up">Valores Fundamentales</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <?php
+            $valores_q = new WP_Query(['post_type' => 'valor', 'posts_per_page' => -1, 'meta_key' => 'orden', 'orderby' => 'meta_value_num', 'order' => 'ASC']);
+            if ($valores_q->have_posts()) :
+                while ($valores_q->have_posts()) : $valores_q->the_post();
+                    $desc = get_post_meta(get_the_ID(), 'descripcion', true);
+            ?>
+            <div class="card bg-white border border-slate-200 hover:shadow-md transition-shadow" data-aos="fade-up">
+                <div class="card-body p-8">
+                    <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-4">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-slate-800 mb-2"><?php the_title(); ?></h3>
+                    <p class="text-sm text-slate-500 leading-relaxed"><?php echo esc_html($desc); ?></p>
+                </div>
             </div>
-            <div style="display:flex;gap:15px;margin-bottom:20px;align-items:flex-start;">
-                <span style="background:var(--navy);color:white;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.85rem;font-weight:700;">2</span>
-                <p>Desarrollar metodologías, prototipos e instrumentos para la medición, adquisición, transmisión y análisis de señales y datos.</p>
+            <?php endwhile; wp_reset_postdata(); endif; ?>
+        </div>
+    </div>
+</section>
+
+<!-- Objetivos -->
+<section class="py-20 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-6">
+        <h2 class="text-slate-800 font-semibold text-3xl mb-12 text-center" data-aos="fade-up">Objetivos</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <?php
+            $obj_q = new WP_Query(['post_type' => 'objetivo', 'posts_per_page' => -1, 'meta_key' => 'orden', 'orderby' => 'meta_value_num', 'order' => 'ASC']);
+            if ($obj_q->have_posts()) :
+                while ($obj_q->have_posts()) : $obj_q->the_post();
+                    $desc = get_post_meta(get_the_ID(), 'descripcion', true);
+            ?>
+            <div class="card bg-white border border-slate-200 hover:border-primary/30 hover:shadow-md transition-all" data-aos="fade-up">
+                <div class="card-body p-7">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
+                        </div>
+                        <h3 class="text-base font-semibold text-slate-800"><?php the_title(); ?></h3>
+                    </div>
+                    <p class="text-sm text-slate-500 leading-relaxed"><?php echo esc_html($desc); ?></p>
+                </div>
             </div>
-            <div style="display:flex;gap:15px;margin-bottom:20px;align-items:flex-start;">
-                <span style="background:var(--navy);color:white;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.85rem;font-weight:700;">3</span>
-                <p>Formar talento humano de alto nivel, integrando activamente a estudiantes de pregrado y posgrado en proyectos de investigación.</p>
-            </div>
-            <div style="display:flex;gap:15px;margin-bottom:20px;align-items:flex-start;">
-                <span style="background:var(--navy);color:white;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.85rem;font-weight:700;">4</span>
-                <p>Fortalecer redes de colaboración nacionales e internacionales con universidades, centros de investigación, industria y sector público.</p>
-            </div>
-            <div style="display:flex;gap:15px;align-items:flex-start;">
-                <span style="background:var(--navy);color:white;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.85rem;font-weight:700;">5</span>
-                <p>Transferir conocimiento y tecnología a la sociedad, mediante servicios especializados, desarrollo tecnológico y difusión científica.</p>
-            </div>
+            <?php endwhile; wp_reset_postdata(); endif; ?>
         </div>
     </div>
 </section>
