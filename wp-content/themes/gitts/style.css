@@ -48,21 +48,27 @@ body > * { max-width: 100%; }
     transform: translateY(0);
 }
 
-/* ── Navbar menu items — override DaisyUI dark bg ── */
+/* ── Navbar menu items — force white text on dark navbar ── */
+.navbar .menu a,
+.navbar .menu li > a,
 [data-theme="gitts"] .navbar .menu a,
 [data-theme="gitts"] .navbar .menu li > a {
     background-color: transparent !important;
-    color: #CBD5E1;
+    color: #CBD5E1 !important;
 }
+.navbar .menu a:hover,
+.navbar .menu li > a:hover,
 [data-theme="gitts"] .navbar .menu a:hover,
 [data-theme="gitts"] .navbar .menu li > a:hover {
     background-color: rgba(255,255,255,0.08) !important;
-    color: #FFFFFF;
+    color: #FFFFFF !important;
 }
+.navbar .menu a.active,
+.navbar .menu li > a.active,
 [data-theme="gitts"] .navbar .menu a.active,
 [data-theme="gitts"] .navbar .menu li > a.active {
     background-color: rgba(255,255,255,0.1) !important;
-    color: #FFFFFF;
+    color: #FFFFFF !important;
 }
 /* Non-navbar menus (dropdowns, mobile) */
 [data-theme="gitts"] .dropdown-content .menu a {

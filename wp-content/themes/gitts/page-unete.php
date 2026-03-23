@@ -9,7 +9,10 @@
 
 <!-- Imagen -->
 <section>
-    <img src="<?php echo get_template_directory_uri(); ?>/assets/img/team/unete-hero.jpg" alt="Equipo GITTS" class="w-full h-[800px] object-cover">
+    <?php
+    $unete_img = has_post_thumbnail() ? get_the_post_thumbnail_url(get_the_ID(), 'full') : get_template_directory_uri() . '/assets/img/team/unete-hero.jpg';
+    ?>
+    <img src="<?php echo esc_url($unete_img); ?>" alt="Equipo GITTS" class="w-full h-[800px] object-cover">
 </section>
 
 <!-- Introducción -->

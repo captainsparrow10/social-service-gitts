@@ -1,7 +1,13 @@
 <?php get_header(); ?>
 
 <!-- 1. HERO -->
-<div class="hero min-h-[85vh]" style="background-image: url('<?php echo get_template_directory_uri(); ?>/assets/img/hero/hero-home.jpg');">
+<?php
+$hero_page = get_page_by_path('inicio');
+$hero_bg = ($hero_page && has_post_thumbnail($hero_page->ID))
+    ? get_the_post_thumbnail_url($hero_page->ID, 'full')
+    : get_template_directory_uri() . '/assets/img/hero/hero-lab.jpg';
+?>
+<div class="hero min-h-[85vh]" style="background-image: url('<?php echo esc_url($hero_bg); ?>');">
     <div class="hero-overlay bg-gradient-to-br from-slate-900/90 via-primary/75 to-primary/30"></div>
     <div class="hero-content text-left w-full max-w-7xl px-6">
         <div class="max-w-2xl" data-aos="fade-right">

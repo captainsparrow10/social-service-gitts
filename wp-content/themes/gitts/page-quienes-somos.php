@@ -21,7 +21,10 @@
                 <p class="text-slate-500 text-base leading-relaxed">De esta manera, el grupo aporta al fortalecimiento de la capacidad científica y tecnológica de la Universidad y del país, promoviendo el desarrollo sostenible y la formación de profesionales altamente calificados.</p>
             </div>
             <div class="lg:col-span-2 lg:sticky lg:top-24" data-aos="fade-left">
-                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/team/quienes-somos.jpg" alt="Equipo GITTS en campo" class="rounded-xl w-full shadow-md">
+                <?php
+                $qs_img = has_post_thumbnail() ? get_the_post_thumbnail_url(get_the_ID(), 'full') : get_template_directory_uri() . '/assets/img/team/quienes-somos.jpg';
+                ?>
+                <img src="<?php echo esc_url($qs_img); ?>" alt="Equipo GITTS en campo" class="rounded-xl w-full shadow-md">
             </div>
         </div>
     </div>
