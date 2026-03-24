@@ -5,10 +5,13 @@
     $cat_name = $cats ? $cats[0]->name : 'General';
     $cat_slug = $cats ? $cats[0]->slug : '';
 
-    // Color del badge según categoría
-    $badge_color = '#165288'; // primary por defecto
+    // Color del badge según categoría (usa colores del tema como base)
+    $primary = get_option('gitts_color_primary', '#165288');
+    $secondary = get_option('gitts_color_secondary', '#52975D');
+    $accent = get_option('gitts_color_accent', '#E83C56');
+    $badge_color = $primary; // default
     if (strpos($cat_slug, 'conferencia') !== false) $badge_color = '#495C9B';
-    elseif (strpos($cat_slug, 'premio') !== false) $badge_color = '#52975D';
+    elseif (strpos($cat_slug, 'premio') !== false) $badge_color = $secondary;
     elseif (strpos($cat_slug, 'tesis') !== false) $badge_color = '#7365AA';
     elseif (strpos($cat_slug, 'evento') !== false || strpos($cat_slug, 'workshop') !== false) $badge_color = '#9C6DB4';
 ?>

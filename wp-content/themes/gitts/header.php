@@ -16,25 +16,25 @@
 <?php wp_body_open(); ?>
 
 <!-- NAVBAR -->
-<div class="navbar bg-[#165288] backdrop-blur-lg border-b border-white/10 sticky top-0 z-50 px-4 lg:px-8">
+<div class="navbar backdrop-blur-lg border-b border-white/10 sticky top-0 z-50 px-4 lg:px-8">
     <!-- Logo -->
     <div class="navbar-start">
         <a href="<?php echo home_url(); ?>" class="flex items-center gap-3 group">
-            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/brand/logo-digital.png" alt="GITTS" class="h-10 w-auto transition-transform group-hover:scale-105">
-            <span class="text-white font-semibold text-lg hidden sm:block tracking-tight">GITTS</span>
+            <img src="<?php echo esc_url(gitts_get_logo_url()); ?>" alt="<?php bloginfo('name'); ?>" class="h-10 w-auto transition-transform group-hover:scale-105">
+            <span class="text-white font-semibold text-lg hidden sm:block tracking-tight"><?php bloginfo('name'); ?></span>
         </a>
     </div>
 
     <!-- Desktop nav -->
     <div class="navbar-center hidden lg:flex">
-        <ul class="menu menu-horizontal px-1 gap-1">
-            <li><a href="<?php echo home_url(); ?>" class="text-sm font-medium text-slate-300 hover:text-white <?php if(is_front_page()) echo 'active text-white'; ?>">Inicio</a></li>
-            <li><a href="<?php echo home_url('/quienes-somos'); ?>" class="text-sm font-medium text-slate-300 hover:text-white <?php if(is_page('quienes-somos')) echo 'active text-white'; ?>">¿Quiénes somos?</a></li>
-            <li><a href="<?php echo home_url('/investigacion'); ?>" class="text-sm font-medium text-slate-300 hover:text-white <?php if(is_page('investigacion') || is_singular('proyecto')) echo 'active text-white'; ?>">Investigación</a></li>
-            <li><a href="<?php echo home_url('/infraestructura'); ?>" class="text-sm font-medium text-slate-300 hover:text-white <?php if(is_page('infraestructura')) echo 'active text-white'; ?>">Infraestructura</a></li>
-            <li><a href="<?php echo home_url('/produccion-cientifica'); ?>" class="text-sm font-medium text-slate-300 hover:text-white <?php if(is_page('produccion-cientifica')) echo 'active text-white'; ?>">Producción científica</a></li>
-            <li><a href="<?php echo home_url('/miembros'); ?>" class="text-sm font-medium text-slate-300 hover:text-white <?php if(is_page('miembros') || is_singular('miembro')) echo 'active text-white'; ?>">Nuestro equipo</a></li>
-        </ul>
+        <?php wp_nav_menu([
+            'theme_location' => 'primary',
+            'container'      => false,
+            'menu_class'     => 'menu menu-horizontal px-1 gap-1',
+            'link_before'    => '<span class="text-sm font-medium text-slate-300 hover:text-white">',
+            'link_after'     => '</span>',
+            'fallback_cb'    => false,
+        ]); ?>
     </div>
 
     <!-- CTA + Mobile -->
@@ -44,15 +44,14 @@
             <div tabindex="0" role="button" class="btn btn-ghost btn-square">
                 <svg class="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
             </div>
-            <ul tabindex="0" class="menu menu-sm dropdown-content bg-white rounded-xl z-[1] mt-3 w-56 p-3 shadow-lg border border-slate-200">
-                <li><a href="<?php echo home_url(); ?>" class="font-medium text-slate-600">Inicio</a></li>
-                <li><a href="<?php echo home_url('/quienes-somos'); ?>" class="font-medium text-slate-600">¿Quiénes somos?</a></li>
-                <li><a href="<?php echo home_url('/investigacion'); ?>" class="font-medium text-slate-600">Investigación</a></li>
-                <li><a href="<?php echo home_url('/infraestructura'); ?>" class="font-medium text-slate-600">Infraestructura</a></li>
-                <li><a href="<?php echo home_url('/produccion-cientifica'); ?>" class="font-medium text-slate-600">Producción científica</a></li>
-                <li><a href="<?php echo home_url('/miembros'); ?>" class="font-medium text-slate-600">Nuestro equipo</a></li>
-                <li class="mt-2"><a href="<?php echo home_url('/unete'); ?>" class="btn btn-accent btn-sm text-sm font-medium">Únete</a></li>
-            </ul>
+            <?php wp_nav_menu([
+                'theme_location' => 'primary',
+                'container'      => false,
+                'menu_class'     => 'menu menu-sm dropdown-content bg-white rounded-xl z-[1] mt-3 w-56 p-3 shadow-lg border border-slate-200',
+                'link_before'    => '<span class="font-medium text-slate-600">',
+                'link_after'     => '</span>',
+                'fallback_cb'    => false,
+            ]); ?>
         </div>
     </div>
 </div>

@@ -11,36 +11,23 @@
     <div class="max-w-5xl mx-auto px-6">
         <div class="space-y-8">
             <?php
-            $servicios = [
-                [
-                    'Consultoría Especializada',
-                    'Asesoramiento experto en telecomunicaciones, procesamiento de señales, instrumentación y tecnologías de sensado. Evaluación técnica de sistemas, diseño de soluciones personalizadas y acompañamiento en proyectos de innovación tecnológica para empresas e instituciones públicas.',
-                    'border-l-primary',
-                    'text-primary',
-                ],
-                [
-                    'Cursos y Talleres',
-                    'Programas de formación técnica y capacitación especializada para profesionales. Talleres prácticos en óptica, procesamiento de señales, Python, machine learning, sensado remoto e instrumentación aplicada.',
-                    'border-l-secondary',
-                    'text-secondary',
-                ],
-                [
-                    'I+D Corporativo',
-                    'Colaboración estratégica de largo plazo. Diseño y construcción de prototipos, validación experimental de tecnologías, desarrollo de algoritmos y soluciones de software científico a la medida.',
-                    'border-l-accent',
-                    'text-accent',
-                ],
-            ];
-            foreach ($servicios as $i => $s) :
+            $colors = ['border-l-primary text-primary', 'border-l-secondary text-secondary', 'border-l-accent text-accent'];
+            $serv_q = new WP_Query(['post_type' => 'servicio', 'posts_per_page' => -1, 'meta_key' => 'orden', 'orderby' => 'meta_value_num', 'order' => 'ASC']);
+            if ($serv_q->have_posts()) :
+                $i = 0;
+                while ($serv_q->have_posts()) : $serv_q->the_post();
+                    $descripcion = get_post_meta(get_the_ID(), 'descripcion', true);
+                    $color = $colors[$i % count($colors)];
+                    $parts = explode(' ', $color);
             ?>
-            <div class="card bg-white border-l-4 <?php echo $s[2]; ?>" data-aos="fade-up" data-aos-delay="<?php echo $i * 80; ?>">
+            <div class="card bg-white border-l-4 <?php echo $parts[0]; ?>" data-aos="fade-up" data-aos-delay="<?php echo $i * 80; ?>">
                 <div class="card-body p-8 lg:p-10">
-                    <h3 class="text-xl font-semibold text-slate-800 mb-3"><?php echo $s[0]; ?></h3>
-                    <p class="text-slate-500 text-base leading-relaxed max-w-3xl mb-5"><?php echo $s[1]; ?></p>
-                    <a href="<?php echo home_url('/unete'); ?>" class="<?php echo $s[3]; ?> text-sm font-medium hover:underline">Solicitar más información →</a>
+                    <h3 class="text-xl font-semibold text-slate-800 mb-3"><?php the_title(); ?></h3>
+                    <p class="text-slate-500 text-base leading-relaxed max-w-3xl mb-5"><?php echo esc_html($descripcion); ?></p>
+                    <a href="<?php echo home_url('/unete'); ?>" class="<?php echo $parts[1]; ?> text-sm font-medium hover:underline">Solicitar más información →</a>
                 </div>
             </div>
-            <?php endforeach; ?>
+            <?php $i++; endwhile; wp_reset_postdata(); endif; ?>
         </div>
     </div>
 </section>

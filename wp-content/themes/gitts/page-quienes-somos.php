@@ -4,7 +4,7 @@
 <div class="page-header py-20">
     <div class="max-w-7xl mx-auto px-6" data-aos="fade-right">
         <h1 class="text-white font-light text-4xl">¿Quiénes Somos?</h1>
-        <p class="text-slate-300 mt-3 text-lg font-light">En GITTS somos un equipo de investigadores dedicados a la ingeniería de las telecomunicaciones y el procesamiento de señales.</p>
+        <p class="text-slate-300 mt-3 text-lg font-light"><?php echo esc_html(get_option('gitts_intro_quienes', 'En GITTS somos un equipo de investigadores dedicados a la ingeniería de las telecomunicaciones y el procesamiento de señales.')); ?></p>
     </div>
 </div>
 
@@ -12,13 +12,9 @@
 <section class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-6">
         <div class="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
-            <div class="lg:col-span-3 space-y-5" data-aos="fade-up">
+            <div class="lg:col-span-3 space-y-5 prose prose-slate max-w-none" data-aos="fade-up">
                 <h2 class="text-slate-800 font-semibold text-2xl mb-6">Sobre GITTS</h2>
-                <p class="text-slate-600 text-base leading-relaxed">El Grupo de Investigación en Tecnologías Avanzadas de Telecomunicación y Procesamiento de Señales (GITTS) surge como una iniciativa estratégica para fortalecer las capacidades de investigación, innovación y formación de talento en áreas fundamentales para la ingeniería contemporánea.</p>
-                <p class="text-slate-600 text-base leading-relaxed">El grupo articula de manera sostenida el trabajo científico en telecomunicaciones, procesamiento de señales, electrónica, sistemas de radiofrecuencia, sistemas ópticos, instrumentación y campos afines, integrando capacidades experimentales, analíticas y de diseño orientadas a la generación de conocimiento y al desarrollo de soluciones tecnológicas.</p>
-                <p class="text-slate-600 text-base leading-relaxed">Las telecomunicaciones y el procesamiento de señales constituyen hoy pilares esenciales del desarrollo económico y social. La conectividad segura y eficiente es un habilitador clave para sectores como la salud, la educación, la industria, la energía y el medio ambiente.</p>
-                <p class="text-slate-600 text-base leading-relaxed">A través de la investigación, la formación de estudiantes, la producción científica y el desarrollo de tecnologías, GITTS contribuye a consolidar una comunidad académica dinámica, fortalecer la colaboración con actores nacionales e internacionales y generar soluciones innovadoras con impacto en la sociedad.</p>
-                <p class="text-slate-500 text-base leading-relaxed">De esta manera, el grupo aporta al fortalecimiento de la capacidad científica y tecnológica de la Universidad y del país, promoviendo el desarrollo sostenible y la formación de profesionales altamente calificados.</p>
+                <?php the_content(); ?>
             </div>
             <div class="lg:col-span-2 lg:sticky lg:top-24" data-aos="fade-left">
                 <?php
@@ -65,7 +61,7 @@
 <!-- Valores -->
 <section class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-6">
-        <h2 class="text-slate-800 font-semibold text-3xl mb-12 text-center" data-aos="fade-up">Valores Fundamentales</h2>
+        <h2 class="text-slate-800 font-semibold text-3xl mb-12 text-center" data-aos="fade-up"><?php echo esc_html(get_option('gitts_sec_valores_fund', 'Valores Fundamentales')); ?></h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <?php
             $valores_q = new WP_Query(['post_type' => 'valor', 'posts_per_page' => -1, 'meta_key' => 'orden', 'orderby' => 'meta_value_num', 'order' => 'ASC']);
@@ -90,7 +86,7 @@
 <!-- Objetivos -->
 <section class="py-20 bg-slate-50">
     <div class="max-w-7xl mx-auto px-6">
-        <h2 class="text-slate-800 font-semibold text-3xl mb-12 text-center" data-aos="fade-up">Objetivos</h2>
+        <h2 class="text-slate-800 font-semibold text-3xl mb-12 text-center" data-aos="fade-up"><?php echo esc_html(get_option('gitts_sec_objetivos', 'Objetivos')); ?></h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <?php
             $obj_q = new WP_Query(['post_type' => 'objetivo', 'posts_per_page' => -1, 'meta_key' => 'orden', 'orderby' => 'meta_value_num', 'order' => 'ASC']);

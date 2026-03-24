@@ -25,7 +25,7 @@
 <!-- Cómo Colaborar -->
 <section class="py-16 bg-slate-50">
     <div class="max-w-7xl mx-auto px-6">
-        <h2 class="text-slate-800 font-semibold text-2xl mb-10 text-center">Cómo Colaborar</h2>
+        <h2 class="text-slate-800 font-semibold text-2xl mb-10 text-center"><?php echo esc_html(get_option('gitts_sec_como_colaborar', 'Cómo Colaborar')); ?></h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <?php
             $colabs_q = new WP_Query(['post_type' => 'colaboracion', 'posts_per_page' => -1, 'meta_key' => 'orden', 'orderby' => 'meta_value_num', 'order' => 'ASC']);
@@ -50,7 +50,7 @@
 <!-- Servicios Institucionales -->
 <section class="py-16 bg-white">
     <div class="max-w-7xl mx-auto px-6">
-        <h2 class="text-slate-800 font-semibold text-2xl mb-10 text-center">Servicios Institucionales</h2>
+        <h2 class="text-slate-800 font-semibold text-2xl mb-10 text-center"><?php echo esc_html(get_option('gitts_sec_servicios', 'Servicios Institucionales')); ?></h2>
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <?php
             $serv_q = new WP_Query(['post_type' => 'servicio', 'posts_per_page' => -1, 'meta_key' => 'orden', 'orderby' => 'meta_value_num', 'order' => 'ASC']);

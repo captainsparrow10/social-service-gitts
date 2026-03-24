@@ -28,7 +28,7 @@ $members_img = get_template_directory_uri() . '/assets/img/team/members';
 <!-- Miembros Principales -->
 <section class="py-16 bg-slate-50">
     <div class="max-w-7xl mx-auto px-6">
-        <h2 class="text-slate-800 font-semibold text-2xl mb-10 text-center">Miembros Principales</h2>
+        <h2 class="text-slate-800 font-semibold text-2xl mb-10 text-center"><?php echo esc_html(get_option('gitts_sec_miembros_principales', 'Miembros Principales')); ?></h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <?php
             $principales = new WP_Query([
@@ -100,7 +100,7 @@ $members_img = get_template_directory_uri() . '/assets/img/team/members';
 <!-- Colaboradores -->
 <section class="py-16 bg-white">
     <div class="max-w-7xl mx-auto px-6">
-        <h2 class="text-slate-800 font-semibold text-2xl mb-10 text-center">Colaboradores</h2>
+        <h2 class="text-slate-800 font-semibold text-2xl mb-10 text-center"><?php echo esc_html(get_option('gitts_sec_colaboradores', 'Colaboradores')); ?></h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <?php
             $colaboradores = new WP_Query([
@@ -147,7 +147,7 @@ $members_img = get_template_directory_uri() . '/assets/img/team/members';
 <!-- Colaboradores Externos -->
 <section class="py-16 bg-slate-50">
     <div class="max-w-7xl mx-auto px-6">
-        <h2 class="text-slate-800 font-semibold text-2xl mb-10 text-center">Colaboradores Externos</h2>
+        <h2 class="text-slate-800 font-semibold text-2xl mb-10 text-center"><?php echo esc_html(get_option('gitts_sec_colaboradores_ext', 'Colaboradores Externos')); ?></h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             <?php
             $externos = new WP_Query([
@@ -194,7 +194,7 @@ $members_img = get_template_directory_uri() . '/assets/img/team/members';
 <!-- Estudiantes -->
 <section class="py-16 bg-white">
     <div class="max-w-7xl mx-auto px-6">
-        <h2 class="text-slate-800 font-semibold text-2xl mb-8 text-center">Estudiantes Activos</h2>
+        <h2 class="text-slate-800 font-semibold text-2xl mb-8 text-center"><?php echo esc_html(get_option('gitts_sec_estudiantes_activos', 'Estudiantes Activos')); ?></h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16 max-w-4xl mx-auto">
             <?php
             $activos = new WP_Query([
@@ -232,7 +232,7 @@ $members_img = get_template_directory_uri() . '/assets/img/team/members';
             ?>
         </div>
 
-        <h2 class="text-slate-800 font-semibold text-2xl mb-8 text-center">Estudiantes Egresados</h2>
+        <h2 class="text-slate-800 font-semibold text-2xl mb-8 text-center"><?php echo esc_html(get_option('gitts_sec_estudiantes_egresados', 'Estudiantes Egresados')); ?></h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
             <?php
             $egresados = new WP_Query([

@@ -55,8 +55,8 @@ $hero_bg = ($hero_page && has_post_thumbnail($hero_page->ID))
 <section class="py-24 bg-slate-50">
     <div class="max-w-7xl mx-auto px-6">
         <div class="text-center mb-16" data-aos="fade-up">
-            <h2 class="text-slate-800 font-semibold text-3xl mb-4">Nuestros Valores</h2>
-            <p class="text-slate-500 text-base max-w-2xl mx-auto">Reconocemos que la capacidad para sobresalir en investigación, desarrollo tecnológico y academia depende de:</p>
+            <h2 class="text-slate-800 font-semibold text-3xl mb-4"><?php echo esc_html(get_option('gitts_sec_valores', 'Nuestros Valores')); ?></h2>
+            <p class="text-slate-500 text-base max-w-2xl mx-auto"><?php echo esc_html(get_option('gitts_intro_valores', 'Reconocemos que la capacidad para sobresalir en investigación, desarrollo tecnológico y academia depende de:')); ?></p>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
             <?php
@@ -80,7 +80,7 @@ $hero_bg = ($hero_page && has_post_thumbnail($hero_page->ID))
 <section class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-6 text-center">
         <div class="mb-14" data-aos="fade-up">
-            <h2 class="text-slate-800 font-semibold text-3xl">Áreas de Especialización</h2>
+            <h2 class="text-slate-800 font-semibold text-3xl"><?php echo esc_html(get_option('gitts_sec_especializacion', 'Áreas de Especialización')); ?></h2>
         </div>
         <div class="flex flex-wrap justify-center gap-3" data-aos="fade-up" data-aos-delay="100">
             <?php
@@ -97,8 +97,8 @@ $hero_bg = ($hero_page && has_post_thumbnail($hero_page->ID))
 <!-- 5. IMPORTANCIA DE LA INVESTIGACIÓN -->
 <section class="py-24 page-header">
     <div class="max-w-3xl mx-auto px-6 text-center" data-aos="fade-up">
-        <h2 class="text-white font-semibold text-3xl mb-8">Importancia de la Investigación</h2>
-        <p class="text-slate-200 text-base leading-relaxed font-light">La investigación en telecomunicaciones y procesamiento de señales es fundamental para la vida moderna. Sus aplicaciones abarcan proyectos industriales, ambientales y sociales, desarrollo profesional, certificación de productos, soluciones comerciales y adopción de estándares. En GITTS, transformamos señales y datos en soluciones de impacto para Panamá y la región.</p>
+        <h2 class="text-white font-semibold text-3xl mb-8"><?php echo esc_html(get_option('gitts_importancia_titulo', 'Importancia de la Investigación')); ?></h2>
+        <p class="text-slate-200 text-base leading-relaxed font-light"><?php echo esc_html(get_option('gitts_importancia_texto', 'La investigación en telecomunicaciones y procesamiento de señales es fundamental para la vida moderna. Sus aplicaciones abarcan proyectos industriales, ambientales y sociales, desarrollo profesional, certificación de productos, soluciones comerciales y adopción de estándares. En GITTS, transformamos señales y datos en soluciones de impacto para Panamá y la región.')); ?></p>
     </div>
 </section>
 
@@ -106,7 +106,7 @@ $hero_bg = ($hero_page && has_post_thumbnail($hero_page->ID))
 <section class="py-24 bg-white">
     <div class="max-w-7xl mx-auto px-6">
         <div class="text-center mb-16" data-aos="fade-up">
-            <h2 class="text-slate-800 font-semibold text-3xl">Actualidad</h2>
+            <h2 class="text-slate-800 font-semibold text-3xl"><?php echo esc_html(get_option('gitts_sec_actualidad', 'Actualidad')); ?></h2>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
             <?php

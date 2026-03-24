@@ -3,7 +3,7 @@
 <div class="page-header py-20">
     <div class="max-w-7xl mx-auto px-6" data-aos="fade-right">
         <h1 class="text-white font-light text-4xl">Investigación</h1>
-        <p class="text-slate-300 mt-3 text-lg font-light">En GITTS desarrollamos investigación científica y tecnológica en telecomunicaciones, procesamiento de señales e inteligencia artificial aplicada a sistemas de comunicación y sensado.</p>
+        <p class="text-slate-300 mt-3 text-lg font-light"><?php echo esc_html(get_option('gitts_intro_invest_header', 'En GITTS desarrollamos investigación científica y tecnológica en telecomunicaciones, procesamiento de señales e inteligencia artificial aplicada a sistemas de comunicación y sensado.')); ?></p>
     </div>
 </div>
 
@@ -17,7 +17,7 @@
 <!-- Áreas de investigación -->
 <section class="py-20 bg-slate-50">
     <div class="max-w-7xl mx-auto px-6">
-        <h2 class="text-slate-800 font-semibold text-2xl mb-10 text-center" data-aos="fade-up">Áreas de Investigación</h2>
+        <h2 class="text-slate-800 font-semibold text-2xl mb-10 text-center" data-aos="fade-up"><?php echo esc_html(get_option('gitts_sec_areas_inv', 'Áreas de Investigación')); ?></h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <?php
             $lineas_q = new WP_Query(['post_type' => 'linea_inv', 'posts_per_page' => -1, 'meta_key' => 'orden', 'orderby' => 'meta_value_num', 'order' => 'ASC']);
@@ -43,7 +43,7 @@
 <!-- Aplicaciones -->
 <section class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-6">
-        <h2 class="text-slate-800 font-semibold text-2xl mb-10 text-center" data-aos="fade-up">Aplicaciones</h2>
+        <h2 class="text-slate-800 font-semibold text-2xl mb-10 text-center" data-aos="fade-up"><?php echo esc_html(get_option('gitts_sec_aplicaciones', 'Aplicaciones')); ?></h2>
         <div class="flex flex-wrap justify-center gap-3" data-aos="fade-up" data-aos-delay="100">
             <?php
             $apps_q = new WP_Query(['post_type' => 'aplicacion', 'posts_per_page' => -1, 'meta_key' => 'orden', 'orderby' => 'meta_value_num', 'order' => 'ASC']);
@@ -59,7 +59,7 @@
 <!-- Filtros de proyectos -->
 <section class="py-10 bg-slate-50">
     <div class="max-w-7xl mx-auto px-6">
-        <h2 class="text-slate-800 font-semibold text-2xl mb-8 text-center" data-aos="fade-up">Proyectos Financiados</h2>
+        <h2 class="text-slate-800 font-semibold text-2xl mb-8 text-center" data-aos="fade-up"><?php echo esc_html(get_option('gitts_sec_proyectos', 'Proyectos Financiados')); ?></h2>
         <div class="flex flex-wrap justify-center gap-3 mb-10" data-aos="fade-up">
             <button class="btn btn-sm bg-primary text-white border-none project-filter filter-active" data-filter="all">Todos</button>
             <button class="btn btn-sm btn-outline border-slate-300 text-slate-600 hover:bg-primary hover:text-white hover:border-primary project-filter" data-filter="ejecucion">En ejecución</button>
@@ -84,8 +84,9 @@
                     $estado = get_post_meta(get_the_ID(), 'estado_proyecto', true) ?: 'En progreso';
                     $es_activo = ($estado !== 'Concluido' && $estado !== 'Finalizado');
                     $estado_filter = $es_activo ? 'ejecucion' : 'finalizado';
+                    $tipo_proyecto = get_post_meta(get_the_ID(), 'tipo_proyecto', true) ?: 'id';
             ?>
-            <a href="<?php the_permalink(); ?>" class="card bg-white border border-slate-200 hover:shadow-md transition-all project-card group" data-estado="<?php echo $estado_filter; ?>" data-tipo="id" data-aos="fade-up" data-aos-delay="<?php echo ($idx % 3) * 60; ?>">
+            <a href="<?php the_permalink(); ?>" class="card bg-white border border-slate-200 hover:shadow-md transition-all project-card group" data-estado="<?php echo esc_attr($estado_filter); ?>" data-tipo="<?php echo esc_attr($tipo_proyecto); ?>" data-aos="fade-up" data-aos-delay="<?php echo ($idx % 3) * 60; ?>">
                 <?php if (has_post_thumbnail()) : ?>
                 <figure><?php the_post_thumbnail('medium_large', ['class' => 'w-full h-44 object-cover group-hover:scale-105 transition-transform duration-300']); ?></figure>
                 <?php else : ?>
@@ -93,7 +94,8 @@
                 <?php endif; ?>
                 <div class="card-body p-6">
                     <div class="flex flex-wrap gap-2">
-                        <span class="badge badge-sm font-medium text-white py-3 px-4" style="background-color:<?php echo $es_activo ? '#52975D' : '#495C9B'; ?>;border-color:<?php echo $es_activo ? '#52975D' : '#495C9B'; ?>"><?php echo $es_activo ? 'En ejecución' : 'Finalizado'; ?></span>
+                        <?php $badge_bg = $es_activo ? get_option('gitts_color_secondary', '#52975D') : '#495C9B'; ?>
+                        <span class="badge badge-sm font-medium text-white py-3 px-4" style="background-color:<?php echo $badge_bg; ?>;border-color:<?php echo $badge_bg; ?>"><?php echo $es_activo ? 'En ejecución' : 'Finalizado'; ?></span>
                     </div>
                     <h3 class="card-title text-sm text-slate-800 mt-2"><?php the_title(); ?></h3>
                 </div>

@@ -3,7 +3,7 @@
 <div class="page-header py-20">
     <div class="max-w-7xl mx-auto px-6" data-aos="fade-right">
         <h1 class="text-white font-light text-4xl">Actualidad</h1>
-        <p class="text-slate-300 mt-3 text-lg font-light">Conferencias, premios, defensas de tesis, workshops y eventos del grupo.</p>
+        <p class="text-slate-300 mt-3 text-lg font-light"><?php echo esc_html(get_option('gitts_intro_noticias', 'Conferencias, premios, defensas de tesis, workshops y eventos del grupo.')); ?></p>
     </div>
 </div>
 

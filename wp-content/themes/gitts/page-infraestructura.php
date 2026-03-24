@@ -10,7 +10,7 @@
 <!-- Laboratorios -->
 <section class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-6">
-        <h2 class="text-slate-800 font-semibold text-2xl mb-10 text-center">Nuestros Laboratorios</h2>
+        <h2 class="text-slate-800 font-semibold text-2xl mb-10 text-center"><?php echo esc_html(get_option('gitts_sec_laboratorios', 'Nuestros Laboratorios')); ?></h2>
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <?php
             $labs_q = new WP_Query(['post_type' => 'laboratorio', 'posts_per_page' => -1, 'meta_key' => 'orden', 'orderby' => 'meta_value_num', 'order' => 'ASC']);
@@ -47,7 +47,7 @@
 <!-- Equipamiento -->
 <section class="py-20 bg-slate-50">
     <div class="max-w-7xl mx-auto px-6">
-        <h2 class="text-slate-800 font-semibold text-2xl mb-10 text-center">Equipamiento Principal</h2>
+        <h2 class="text-slate-800 font-semibold text-2xl mb-10 text-center"><?php echo esc_html(get_option('gitts_sec_equipamiento', 'Equipamiento Principal')); ?></h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <?php
             $equip_q = new WP_Query(['post_type' => 'equipo_lab', 'posts_per_page' => -1, 'meta_key' => 'orden', 'orderby' => 'meta_value_num', 'order' => 'ASC']);
@@ -72,7 +72,7 @@
 <!-- Capacidades Técnicas -->
 <section class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-6">
-        <h2 class="text-slate-800 font-semibold text-2xl mb-10 text-center">Capacidades Técnicas</h2>
+        <h2 class="text-slate-800 font-semibold text-2xl mb-10 text-center"><?php echo esc_html(get_option('gitts_sec_capacidades', 'Capacidades Técnicas')); ?></h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <?php
             $caps_q = new WP_Query(['post_type' => 'capacidad', 'posts_per_page' => -1, 'meta_key' => 'orden', 'orderby' => 'meta_value_num', 'order' => 'ASC']);
@@ -95,7 +95,7 @@
 <!-- Ubicación -->
 <section class="py-16 page-header">
     <div class="max-w-3xl mx-auto px-6 text-center">
-        <h2 class="text-white font-semibold text-2xl mb-4">Ubicación</h2>
+        <h2 class="text-white font-semibold text-2xl mb-4"><?php echo esc_html(get_option('gitts_sec_ubicacion', 'Ubicación')); ?></h2>
         <p class="text-slate-200 text-base leading-relaxed"><?php echo esc_html(get_option('gitts_direccion', '')); ?>, <?php echo esc_html(get_option('gitts_campus', '')); ?></p>
         <a href="<?php echo home_url('/unete'); ?>" class="btn btn-lg font-medium text-base bg-white text-primary border-none hover:bg-slate-100 mt-8">Únete al equipo</a>
     </div>

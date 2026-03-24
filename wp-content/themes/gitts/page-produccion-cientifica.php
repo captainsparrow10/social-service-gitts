@@ -3,7 +3,7 @@
 <div class="page-header py-20">
     <div class="max-w-7xl mx-auto px-6" data-aos="fade-right">
         <h1 class="text-white font-light text-4xl">Producción Científica</h1>
-        <p class="text-slate-300 mt-3 text-lg font-light max-w-3xl">Artículos en revistas y congresos internacionales, tesis desarrolladas por estudiantes de distintos niveles y resultados de innovación tecnológica.</p>
+        <p class="text-slate-300 mt-3 text-lg font-light max-w-3xl"><?php echo esc_html(get_option('gitts_intro_prod_header', 'Artículos en revistas y congresos internacionales, tesis desarrolladas por estudiantes de distintos niveles y resultados de innovación tecnológica.')); ?></p>
     </div>
 </div>
 
@@ -39,7 +39,7 @@
 
         <!-- Más recientes — Carousel -->
         <div class="flex items-center justify-between mb-8" data-aos="fade-up">
-            <h2 class="text-slate-800 font-semibold text-2xl">Más Recientes</h2>
+            <h2 class="text-slate-800 font-semibold text-2xl"><?php echo esc_html(get_option('gitts_sec_recientes', 'Más Recientes')); ?></h2>
             <div class="flex gap-2">
                 <button class="btn btn-sm btn-circle btn-outline border-slate-300 text-slate-500 hover:bg-primary hover:text-white hover:border-primary carousel-prev" data-target="carousel-recientes">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
@@ -65,7 +65,7 @@
             ?>
             <a href="<?php echo esc_url($doi); ?>" target="_blank" class="card bg-white border border-slate-200 hover:border-primary/30 hover:shadow-md transition-all min-w-[320px] max-w-[360px] snap-start flex-shrink-0 group">
                 <div class="card-body p-6">
-                    <span class="badge badge-sm font-medium text-white py-2.5 px-3 mb-2" style="background-color:#495C9B;border-color:#495C9B"><?php echo esc_html($anio); ?></span>
+                    <span class="badge badge-sm font-medium text-white py-2.5 px-3 mb-2" style="background-color:<?php echo esc_attr(get_option('gitts_color_primary', '#165288')); ?>"><?php echo esc_html($anio); ?></span>
                     <h4 class="text-sm font-semibold text-slate-800 leading-snug group-hover:text-primary transition-colors"><?php echo esc_html(get_the_title()); ?></h4>
                     <p class="text-xs text-slate-500 mt-2"><?php echo esc_html($autores); ?></p>
                     <p class="text-xs text-slate-400 mt-1"><?php echo esc_html($revista); ?></p>
@@ -81,7 +81,7 @@
 
         <!-- Más citadas — Carousel -->
         <div class="flex items-center justify-between mb-8" data-aos="fade-up">
-            <h2 class="text-slate-800 font-semibold text-2xl">Más Citadas</h2>
+            <h2 class="text-slate-800 font-semibold text-2xl"><?php echo esc_html(get_option('gitts_sec_citadas', 'Más Citadas')); ?></h2>
             <div class="flex gap-2">
                 <button class="btn btn-sm btn-circle btn-outline border-slate-300 text-slate-500 hover:bg-primary hover:text-white hover:border-primary carousel-prev" data-target="carousel-citadas">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
@@ -107,7 +107,7 @@
             ?>
             <a href="<?php echo esc_url($doi); ?>" target="_blank" class="card bg-white border border-slate-200 hover:border-primary/30 hover:shadow-md transition-all min-w-[320px] max-w-[360px] snap-start flex-shrink-0 group">
                 <div class="card-body p-6">
-                    <span class="badge badge-sm font-medium text-white py-2.5 px-3 mb-2" style="background-color:#495C9B;border-color:#495C9B"><?php echo esc_html($anio); ?></span>
+                    <span class="badge badge-sm font-medium text-white py-2.5 px-3 mb-2" style="background-color:<?php echo esc_attr(get_option('gitts_color_primary', '#165288')); ?>"><?php echo esc_html($anio); ?></span>
                     <h4 class="text-sm font-semibold text-slate-800 leading-snug group-hover:text-primary transition-colors"><?php echo esc_html(get_the_title()); ?></h4>
                     <p class="text-xs text-slate-500 mt-2"><?php echo esc_html($autores); ?></p>
                     <p class="text-xs text-slate-400 mt-1"><?php echo esc_html($revista); ?></p>
@@ -122,7 +122,7 @@
         </div>
 
         <!-- Lista completa -->
-        <h2 class="text-slate-800 font-semibold text-2xl mb-8" data-aos="fade-up">Lista Completa</h2>
+        <h2 class="text-slate-800 font-semibold text-2xl mb-8" data-aos="fade-up"><?php echo esc_html(get_option('gitts_sec_lista_completa', 'Lista Completa')); ?></h2>
         <div class="space-y-4" data-aos="fade-up">
             <?php
             $todas_q = new WP_Query([
@@ -157,7 +157,7 @@
 <!-- TESIS -->
 <section class="py-16 bg-white prod-section" data-section="tesis">
     <div class="max-w-7xl mx-auto px-6">
-        <h2 class="text-slate-800 font-semibold text-2xl mb-8" data-aos="fade-up">Tesis</h2>
+        <h2 class="text-slate-800 font-semibold text-2xl mb-8" data-aos="fade-up"><?php echo esc_html(get_option('gitts_sec_tesis', 'Tesis')); ?></h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <?php
             $tesis_q = new WP_Query([
@@ -176,7 +176,7 @@
             <div class="card bg-white border border-slate-200 hover:border-primary/30 transition-colors" data-aos="fade-up" data-aos-delay="<?php echo ($t_index % 2) * 60; ?>">
                 <div class="card-body p-6">
                     <div class="flex items-center gap-2 mb-2">
-                        <span class="badge badge-sm font-medium text-white py-2.5 px-3" style="background-color:#7365AA"><?php echo esc_html($anio); ?></span>
+                        <span class="badge badge-sm font-medium text-white py-2.5 px-3" style="background-color:#7365AA;border-color:#7365AA"><?php echo esc_html($anio); ?></span>
                         <?php if ($nivel) : ?>
                             <span class="badge badge-sm badge-outline border-slate-300 text-slate-500 py-2.5 px-3"><?php echo esc_html($nivel); ?></span>
                         <?php endif; ?>
@@ -203,7 +203,7 @@
 <!-- DESARROLLOS APLICADOS -->
 <section class="py-16 bg-slate-50 prod-section" data-section="desarrollos">
     <div class="max-w-7xl mx-auto px-6">
-        <h2 class="text-slate-800 font-semibold text-2xl mb-8" data-aos="fade-up">Desarrollos Aplicados</h2>
+        <h2 class="text-slate-800 font-semibold text-2xl mb-8" data-aos="fade-up"><?php echo esc_html(get_option('gitts_sec_desarrollos', 'Desarrollos Aplicados')); ?></h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <?php
             $dev_q = new WP_Query([
@@ -221,7 +221,7 @@
                 <div class="card-body p-7">
                     <div class="flex items-center justify-between mb-3">
                         <?php if ($estado) : ?>
-                            <span class="badge badge-sm font-medium text-white py-3 px-4" style="background-color:#52975D"><?php echo esc_html($estado); ?></span>
+                            <span class="badge badge-sm font-medium text-white py-3 px-4" style="background-color:<?php echo esc_attr(get_option('gitts_color_secondary', '#52975D')); ?>"><?php echo esc_html($estado); ?></span>
                         <?php endif; ?>
                         <span class="text-xs font-mono text-slate-400"><?php echo esc_html($anio); ?></span>
                     </div>

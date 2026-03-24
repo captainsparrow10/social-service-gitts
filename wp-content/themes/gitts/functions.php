@@ -8,9 +8,27 @@ function gitts_setup() {
     add_theme_support('title-tag');
     add_theme_support('post-thumbnails');
     add_theme_support('html5', ['search-form','comment-form','gallery','caption']);
-    register_nav_menus(['primary' => 'Menú Principal']);
+    add_theme_support('custom-logo', [
+        'height'      => 80,
+        'width'       => 200,
+        'flex-height' => true,
+        'flex-width'  => true,
+    ]);
+    register_nav_menus([
+        'primary' => 'Menú Principal',
+        'footer'  => 'Menú Footer',
+    ]);
 }
 add_action('after_setup_theme', 'gitts_setup');
+
+// Helper: obtener URL del logo (custom_logo o fallback al del tema)
+function gitts_get_logo_url() {
+    $custom_logo_id = get_theme_mod('custom_logo');
+    if ($custom_logo_id) {
+        return wp_get_attachment_image_url($custom_logo_id, 'full');
+    }
+    return get_template_directory_uri() . '/assets/img/brand/logo-digital.png';
+}
 
 function gitts_scripts() {
     // Myriad Pro loaded via @font-face in style.css
@@ -43,16 +61,21 @@ remove_action('wp_enqueue_scripts', 'wp_enqueue_global_styles');
 remove_action('wp_body_open', 'wp_global_styles_render_svg_filters');
 
 // Tailwind config + DaisyUI custom theme
-function gitts_tailwind_config() { ?>
+function gitts_tailwind_config() {
+    $primary   = get_option('gitts_color_primary', '#165288');
+    $secondary = get_option('gitts_color_secondary', '#52975D');
+    $accent    = get_option('gitts_color_accent', '#E83C56');
+    $primary_dark = gitts_darken_hex($primary, 0.3);
+?>
 <script>
 tailwind.config = {
     theme: {
         extend: {
             colors: {
-                'baleine': '#165288',
-                'baleine-dark': '#0e3a5f',
-                'hibiscus': '#E83C56',
-                'mgreen': '#52975D',
+                'baleine': '<?php echo $primary; ?>',
+                'baleine-dark': '<?php echo $primary_dark; ?>',
+                'hibiscus': '<?php echo $accent; ?>',
+                'mgreen': '<?php echo $secondary; ?>',
                 'indigo': '#495C9B',
                 'purple-mid': '#7365AA',
                 'orchid': '#9C6DB4',
@@ -251,10 +274,26 @@ add_action('add_meta_boxes', 'gitts_meta_boxes');
 
 function gitts_proyecto_fields_cb($post) {
     wp_nonce_field('gitts_save', 'gitts_nonce');
+
+    // Estado del proyecto (select)
+    $estado = get_post_meta($post->ID, 'estado_proyecto', true);
+    echo "<p><strong>Estado del Proyecto:</strong><br><select name='estado_proyecto' class='widefat'>";
+    foreach (['En progreso', 'Concluido', 'Pausado'] as $opt) {
+        echo "<option value='" . esc_attr($opt) . "'" . selected($estado, $opt, false) . ">" . esc_html($opt) . "</option>";
+    }
+    echo "</select></p>";
+
+    // Tipo de proyecto (select)
+    $tipo = get_post_meta($post->ID, 'tipo_proyecto', true);
+    echo "<p><strong>Tipo de Proyecto:</strong><br><select name='tipo_proyecto' class='widefat'>";
+    foreach (['I+D' => 'id', 'Generación de capacidades' => 'capacidades', 'Colaboración' => 'colaboracion'] as $label => $val) {
+        echo "<option value='" . esc_attr($val) . "'" . selected($tipo, $val, false) . ">" . esc_html($label) . "</option>";
+    }
+    echo "</select></p>";
+
     $fields = [
         'fecha_inicio' => 'Fecha de Inicio',
         'fecha_fin' => 'Fecha de Fin (vacío si en curso)',
-        'estado_proyecto' => 'Estado (En progreso / Concluido / Pausado)',
         'investigador_principal' => 'Investigador Principal',
         'co_investigadores' => 'Co-investigadores (separados por coma)',
         'investigadores_asignados' => 'Otros investigadores',
@@ -302,13 +341,18 @@ function gitts_publicacion_fields_cb($post) {
         'pub_director' => 'Director (solo tesis)',
         'pub_nivel' => 'Nivel (Pregrado/Maestría — solo tesis)',
         'pub_estado' => 'Estado (solo desarrollos)',
-        'pub_destacada' => 'Destacada (si/no)',
         'pub_citaciones' => 'Número de citaciones',
     ];
     foreach ($fields as $k => $label) {
         $v = get_post_meta($post->ID, $k, true);
         echo "<p><strong>{$label}:</strong><br><input type='text' name='{$k}' value='" . esc_attr($v) . "' class='widefat'></p>";
     }
+    // Destacada (select)
+    $destacada = get_post_meta($post->ID, 'pub_destacada', true);
+    echo "<p><strong>Destacada:</strong><br><select name='pub_destacada' class='widefat'>";
+    echo "<option value='no'" . selected($destacada, 'no', false) . ">No</option>";
+    echo "<option value='si'" . selected($destacada, 'si', false) . ">Sí</option>";
+    echo "</select></p>";
 }
 
 function gitts_simple_fields_cb($post) {
@@ -331,24 +375,27 @@ function gitts_lab_fields_cb($post) {
 
 function gitts_save_fields($post_id) {
     if (!isset($_POST['gitts_nonce']) || !wp_verify_nonce($_POST['gitts_nonce'], 'gitts_save')) return;
-    $all = [
-        // proyecto
-        'fecha_inicio','fecha_fin','estado_proyecto','investigador_principal','co_investigadores',
-        'investigadores_asignados','organismo_financiador','organismo_ejecutor','codigo_proyecto',
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+
+    // Campos de texto (sanitize_text_field)
+    $text_fields = [
+        'fecha_inicio','fecha_fin','estado_proyecto','tipo_proyecto',
+        'investigador_principal','co_investigadores','investigadores_asignados',
+        'organismo_financiador','organismo_ejecutor','codigo_proyecto',
         'entidades_financiadoras','duracion','monto_total','contacto_email','galeria_imagenes',
-        // miembro
         'cargo_oficial','email_institucional','link_linkedin','link_orcid','link_researchgate',
-        'link_apersei','link_scholar','bio_extendida','orden',
-        // publicacion
+        'link_apersei','link_scholar','orden',
         'pub_autores','pub_revista','pub_anio','pub_doi','pub_director','pub_nivel',
         'pub_estado','pub_destacada','pub_citaciones',
-        // simple fields (shared)
-        'descripcion',
-        // laboratorio
-        'lab_descripcion','lab_equipamiento',
     ];
-    foreach ($all as $f) {
+    foreach ($text_fields as $f) {
         if (isset($_POST[$f])) update_post_meta($post_id, $f, sanitize_text_field($_POST[$f]));
+    }
+
+    // Campos textarea (sanitize_textarea_field — preserva saltos de línea)
+    $textarea_fields = ['bio_extendida', 'descripcion', 'lab_descripcion', 'lab_equipamiento'];
+    foreach ($textarea_fields as $f) {
+        if (isset($_POST[$f])) update_post_meta($post_id, $f, sanitize_textarea_field($_POST[$f]));
     }
 }
 add_action('save_post', 'gitts_save_fields');
@@ -573,7 +620,25 @@ add_action('admin_menu', 'gitts_theme_options_page');
 
 function gitts_settings_render() {
     if (isset($_POST['gitts_settings_nonce']) && wp_verify_nonce($_POST['gitts_settings_nonce'], 'gitts_settings_save')) {
-        $opts = ['gitts_mision','gitts_vision','gitts_telefono','gitts_email_contacto','gitts_direccion','gitts_campus','gitts_hero_titulo','gitts_hero_subtitulo','gitts_intro_quienes','gitts_intro_unete','gitts_intro_miembros','gitts_intro_produccion','gitts_intro_infraestructura','gitts_intro_investigacion'];
+        $opts = [
+            'gitts_mision','gitts_vision','gitts_telefono','gitts_email_contacto','gitts_direccion','gitts_campus',
+            'gitts_hero_titulo','gitts_hero_subtitulo',
+            'gitts_intro_quienes','gitts_intro_unete','gitts_intro_miembros','gitts_intro_produccion',
+            'gitts_intro_infraestructura','gitts_intro_investigacion',
+            'gitts_intro_valores','gitts_importancia_titulo','gitts_importancia_texto',
+            'gitts_descripcion_grupo','gitts_intro_prod_header','gitts_intro_invest_header',
+            'gitts_institucion',
+            'gitts_color_primary','gitts_color_secondary','gitts_color_accent',
+            'gitts_intro_noticias',
+            'gitts_sec_valores','gitts_sec_especializacion','gitts_sec_actualidad',
+            'gitts_sec_laboratorios','gitts_sec_equipamiento','gitts_sec_capacidades','gitts_sec_ubicacion',
+            'gitts_sec_areas_inv','gitts_sec_aplicaciones','gitts_sec_proyectos',
+            'gitts_sec_recientes','gitts_sec_citadas','gitts_sec_lista_completa','gitts_sec_tesis','gitts_sec_desarrollos',
+            'gitts_sec_miembros_principales','gitts_sec_colaboradores','gitts_sec_colaboradores_ext',
+            'gitts_sec_estudiantes_activos','gitts_sec_estudiantes_egresados',
+            'gitts_sec_como_colaborar','gitts_sec_servicios',
+            'gitts_sec_valores_fund','gitts_sec_objetivos',
+        ];
         foreach ($opts as $opt) {
             if (isset($_POST[$opt])) update_option($opt, wp_kses_post($_POST[$opt]));
         }
@@ -589,6 +654,12 @@ function gitts_settings_render() {
                 <tr><th>Título</th><td><input type="text" name="gitts_hero_titulo" value="<?php echo esc_attr(get_option('gitts_hero_titulo', '')); ?>" class="large-text"></td></tr>
                 <tr><th>Subtítulo</th><td><textarea name="gitts_hero_subtitulo" class="large-text" rows="2"><?php echo esc_textarea(get_option('gitts_hero_subtitulo', '')); ?></textarea></td></tr>
             </table>
+            <h2>Secciones del Home</h2>
+            <table class="form-table">
+                <tr><th>Subtítulo sección Valores</th><td><textarea name="gitts_intro_valores" class="large-text" rows="2"><?php echo esc_textarea(get_option('gitts_intro_valores', '')); ?></textarea></td></tr>
+                <tr><th>Título sección Importancia</th><td><input type="text" name="gitts_importancia_titulo" value="<?php echo esc_attr(get_option('gitts_importancia_titulo', '')); ?>" class="large-text"></td></tr>
+                <tr><th>Texto sección Importancia</th><td><textarea name="gitts_importancia_texto" class="large-text" rows="4"><?php echo esc_textarea(get_option('gitts_importancia_texto', '')); ?></textarea></td></tr>
+            </table>
             <h2>Contenido Institucional</h2>
             <table class="form-table">
                 <tr><th>Misión</th><td><textarea name="gitts_mision" class="large-text" rows="4"><?php echo esc_textarea(get_option('gitts_mision', '')); ?></textarea></td></tr>
@@ -599,6 +670,63 @@ function gitts_settings_render() {
                 <tr><th>Intro Producción</th><td><textarea name="gitts_intro_produccion" class="large-text" rows="3"><?php echo esc_textarea(get_option('gitts_intro_produccion', '')); ?></textarea></td></tr>
                 <tr><th>Intro Infraestructura</th><td><textarea name="gitts_intro_infraestructura" class="large-text" rows="3"><?php echo esc_textarea(get_option('gitts_intro_infraestructura', '')); ?></textarea></td></tr>
                 <tr><th>Intro Investigación</th><td><textarea name="gitts_intro_investigacion" class="large-text" rows="3"><?php echo esc_textarea(get_option('gitts_intro_investigacion', '')); ?></textarea></td></tr>
+            </table>
+            <h2>Headers de Páginas</h2>
+            <table class="form-table">
+                <tr><th>Subtítulo header Investigación</th><td><textarea name="gitts_intro_invest_header" class="large-text" rows="2"><?php echo esc_textarea(get_option('gitts_intro_invest_header', '')); ?></textarea></td></tr>
+                <tr><th>Subtítulo header Producción Científica</th><td><textarea name="gitts_intro_prod_header" class="large-text" rows="2"><?php echo esc_textarea(get_option('gitts_intro_prod_header', '')); ?></textarea></td></tr>
+            </table>
+            <h2>Títulos de Sección</h2>
+            <p class="description">Personaliza los títulos de cada sección visible en el sitio. Deja vacío para usar el texto por defecto.</p>
+            <table class="form-table">
+                <tr><th colspan="2" style="padding-bottom:0"><strong>— Home —</strong></th></tr>
+                <tr><th>Valores</th><td><input type="text" name="gitts_sec_valores" value="<?php echo esc_attr(get_option('gitts_sec_valores', '')); ?>" class="large-text" placeholder="Nuestros Valores"></td></tr>
+                <tr><th>Especialización</th><td><input type="text" name="gitts_sec_especializacion" value="<?php echo esc_attr(get_option('gitts_sec_especializacion', '')); ?>" class="large-text" placeholder="Áreas de Especialización"></td></tr>
+                <tr><th>Actualidad</th><td><input type="text" name="gitts_sec_actualidad" value="<?php echo esc_attr(get_option('gitts_sec_actualidad', '')); ?>" class="large-text" placeholder="Actualidad"></td></tr>
+                <tr><th colspan="2" style="padding-bottom:0"><strong>— Quiénes Somos —</strong></th></tr>
+                <tr><th>Valores Fundamentales</th><td><input type="text" name="gitts_sec_valores_fund" value="<?php echo esc_attr(get_option('gitts_sec_valores_fund', '')); ?>" class="large-text" placeholder="Valores Fundamentales"></td></tr>
+                <tr><th>Objetivos</th><td><input type="text" name="gitts_sec_objetivos" value="<?php echo esc_attr(get_option('gitts_sec_objetivos', '')); ?>" class="large-text" placeholder="Objetivos"></td></tr>
+                <tr><th colspan="2" style="padding-bottom:0"><strong>— Investigación —</strong></th></tr>
+                <tr><th>Áreas de Investigación</th><td><input type="text" name="gitts_sec_areas_inv" value="<?php echo esc_attr(get_option('gitts_sec_areas_inv', '')); ?>" class="large-text" placeholder="Áreas de Investigación"></td></tr>
+                <tr><th>Aplicaciones</th><td><input type="text" name="gitts_sec_aplicaciones" value="<?php echo esc_attr(get_option('gitts_sec_aplicaciones', '')); ?>" class="large-text" placeholder="Aplicaciones"></td></tr>
+                <tr><th>Proyectos</th><td><input type="text" name="gitts_sec_proyectos" value="<?php echo esc_attr(get_option('gitts_sec_proyectos', '')); ?>" class="large-text" placeholder="Proyectos Financiados"></td></tr>
+                <tr><th colspan="2" style="padding-bottom:0"><strong>— Producción Científica —</strong></th></tr>
+                <tr><th>Más Recientes</th><td><input type="text" name="gitts_sec_recientes" value="<?php echo esc_attr(get_option('gitts_sec_recientes', '')); ?>" class="large-text" placeholder="Más Recientes"></td></tr>
+                <tr><th>Más Citadas</th><td><input type="text" name="gitts_sec_citadas" value="<?php echo esc_attr(get_option('gitts_sec_citadas', '')); ?>" class="large-text" placeholder="Más Citadas"></td></tr>
+                <tr><th>Lista Completa</th><td><input type="text" name="gitts_sec_lista_completa" value="<?php echo esc_attr(get_option('gitts_sec_lista_completa', '')); ?>" class="large-text" placeholder="Lista Completa"></td></tr>
+                <tr><th>Tesis</th><td><input type="text" name="gitts_sec_tesis" value="<?php echo esc_attr(get_option('gitts_sec_tesis', '')); ?>" class="large-text" placeholder="Tesis"></td></tr>
+                <tr><th>Desarrollos</th><td><input type="text" name="gitts_sec_desarrollos" value="<?php echo esc_attr(get_option('gitts_sec_desarrollos', '')); ?>" class="large-text" placeholder="Desarrollos Aplicados"></td></tr>
+                <tr><th colspan="2" style="padding-bottom:0"><strong>— Infraestructura —</strong></th></tr>
+                <tr><th>Laboratorios</th><td><input type="text" name="gitts_sec_laboratorios" value="<?php echo esc_attr(get_option('gitts_sec_laboratorios', '')); ?>" class="large-text" placeholder="Nuestros Laboratorios"></td></tr>
+                <tr><th>Equipamiento</th><td><input type="text" name="gitts_sec_equipamiento" value="<?php echo esc_attr(get_option('gitts_sec_equipamiento', '')); ?>" class="large-text" placeholder="Equipamiento Principal"></td></tr>
+                <tr><th>Capacidades</th><td><input type="text" name="gitts_sec_capacidades" value="<?php echo esc_attr(get_option('gitts_sec_capacidades', '')); ?>" class="large-text" placeholder="Capacidades Técnicas"></td></tr>
+                <tr><th>Ubicación</th><td><input type="text" name="gitts_sec_ubicacion" value="<?php echo esc_attr(get_option('gitts_sec_ubicacion', '')); ?>" class="large-text" placeholder="Ubicación"></td></tr>
+                <tr><th colspan="2" style="padding-bottom:0"><strong>— Equipo —</strong></th></tr>
+                <tr><th>Miembros Principales</th><td><input type="text" name="gitts_sec_miembros_principales" value="<?php echo esc_attr(get_option('gitts_sec_miembros_principales', '')); ?>" class="large-text" placeholder="Miembros Principales"></td></tr>
+                <tr><th>Colaboradores</th><td><input type="text" name="gitts_sec_colaboradores" value="<?php echo esc_attr(get_option('gitts_sec_colaboradores', '')); ?>" class="large-text" placeholder="Colaboradores"></td></tr>
+                <tr><th>Colaboradores Externos</th><td><input type="text" name="gitts_sec_colaboradores_ext" value="<?php echo esc_attr(get_option('gitts_sec_colaboradores_ext', '')); ?>" class="large-text" placeholder="Colaboradores Externos"></td></tr>
+                <tr><th>Estudiantes Activos</th><td><input type="text" name="gitts_sec_estudiantes_activos" value="<?php echo esc_attr(get_option('gitts_sec_estudiantes_activos', '')); ?>" class="large-text" placeholder="Estudiantes Activos"></td></tr>
+                <tr><th>Estudiantes Egresados</th><td><input type="text" name="gitts_sec_estudiantes_egresados" value="<?php echo esc_attr(get_option('gitts_sec_estudiantes_egresados', '')); ?>" class="large-text" placeholder="Estudiantes Egresados"></td></tr>
+                <tr><th colspan="2" style="padding-bottom:0"><strong>— Únete —</strong></th></tr>
+                <tr><th>Cómo Colaborar</th><td><input type="text" name="gitts_sec_como_colaborar" value="<?php echo esc_attr(get_option('gitts_sec_como_colaborar', '')); ?>" class="large-text" placeholder="Cómo Colaborar"></td></tr>
+                <tr><th>Servicios</th><td><input type="text" name="gitts_sec_servicios" value="<?php echo esc_attr(get_option('gitts_sec_servicios', '')); ?>" class="large-text" placeholder="Servicios Institucionales"></td></tr>
+                <tr><th colspan="2" style="padding-bottom:0"><strong>— Noticias —</strong></th></tr>
+                <tr><th>Subtítulo Noticias</th><td><input type="text" name="gitts_intro_noticias" value="<?php echo esc_attr(get_option('gitts_intro_noticias', '')); ?>" class="large-text" placeholder="Conferencias, premios, defensas de tesis, workshops y eventos del grupo."></td></tr>
+            </table>
+            <h2>Identidad</h2>
+            <table class="form-table">
+                <tr><th>Institución</th><td><input type="text" name="gitts_institucion" value="<?php echo esc_attr(get_option('gitts_institucion', '')); ?>" class="large-text" placeholder="Universidad Tecnológica de Panamá"></td></tr>
+            </table>
+            <h2>Colores del Tema</h2>
+            <p class="description">Personaliza los colores principales del sitio. Deja vacío para usar los colores por defecto.</p>
+            <table class="form-table">
+                <tr><th>Color Primario (navy)</th><td><input type="color" name="gitts_color_primary" value="<?php echo esc_attr(get_option('gitts_color_primary', '#165288')); ?>"> <code><?php echo esc_html(get_option('gitts_color_primary', '#165288')); ?></code></td></tr>
+                <tr><th>Color Secundario (green)</th><td><input type="color" name="gitts_color_secondary" value="<?php echo esc_attr(get_option('gitts_color_secondary', '#52975D')); ?>"> <code><?php echo esc_html(get_option('gitts_color_secondary', '#52975D')); ?></code></td></tr>
+                <tr><th>Color Acento (hibiscus)</th><td><input type="color" name="gitts_color_accent" value="<?php echo esc_attr(get_option('gitts_color_accent', '#E83C56')); ?>"> <code><?php echo esc_html(get_option('gitts_color_accent', '#E83C56')); ?></code></td></tr>
+            </table>
+            <h2>Footer</h2>
+            <table class="form-table">
+                <tr><th>Descripción del grupo</th><td><textarea name="gitts_descripcion_grupo" class="large-text" rows="3"><?php echo esc_textarea(get_option('gitts_descripcion_grupo', '')); ?></textarea></td></tr>
             </table>
             <h2>Contacto (Footer + Únete)</h2>
             <table class="form-table">
@@ -611,4 +739,96 @@ function gitts_settings_render() {
         </form>
     </div>
     <?php
+}
+
+// ── Defaults al activar el tema ──
+function gitts_theme_defaults() {
+    $defaults = [
+        'gitts_hero_titulo' => 'Grupo de Investigación en Tecnologías Avanzadas de <span class="font-semibold">Telecomunicación</span> y <span class="font-semibold">Procesamiento de Señales</span>',
+        'gitts_hero_subtitulo' => 'Investigación de frontera que conecta señales y datos con soluciones de impacto.',
+        'gitts_mision' => 'Generar, validar y transferir conocimiento mediante investigación científica y desarrollo tecnológico en telecomunicaciones, procesamiento de señales y áreas afines (sensado electromagnético, instrumentación, electrónica, radiofrecuencia y óptica). Con un enfoque científico riguroso y prototipos experimentales, GITTS transforma señales y datos en soluciones confiables, eficientes y seguras, formando talento e impulsando la innovación para atender retos relevantes en la industria, el sector público y la sociedad de manera sostenible.',
+        'gitts_vision' => 'Ser un grupo de investigación de referencia en Panamá y la región, reconocido por la solidez de su trabajo científico-tecnológico y la pertinencia de sus líneas de investigación, así como por la calidad de su formación y su capacidad para liderar proyectos aplicados. GITTS aspira a consolidarse como un espacio de innovación y colaboración internacional, con impacto sostenido en el desarrollo científico, productivo y social (mejoras en telecomunicaciones, salud, energía, medio ambiente, etc.), actuando como puente entre la academia y la industria.',
+        'gitts_intro_valores' => 'Reconocemos que la capacidad para sobresalir en investigación, desarrollo tecnológico y academia depende de:',
+        'gitts_importancia_titulo' => 'Importancia de la Investigación',
+        'gitts_importancia_texto' => 'La investigación en telecomunicaciones y procesamiento de señales es fundamental para la vida moderna. Sus aplicaciones abarcan proyectos industriales, ambientales y sociales, desarrollo profesional, certificación de productos, soluciones comerciales y adopción de estándares. En GITTS, transformamos señales y datos en soluciones de impacto para Panamá y la región.',
+        'gitts_descripcion_grupo' => 'Grupo de Investigación en Tecnologías Avanzadas de Telecomunicación y Procesamiento de Señales.',
+        'gitts_intro_quienes' => 'En GITTS somos un equipo de investigadores dedicados a la ingeniería de las telecomunicaciones y el procesamiento de señales.',
+        'gitts_intro_invest_header' => 'En GITTS desarrollamos investigación científica y tecnológica en telecomunicaciones, procesamiento de señales e inteligencia artificial aplicada a sistemas de comunicación y sensado.',
+        'gitts_intro_prod_header' => 'Artículos en revistas y congresos internacionales, tesis desarrolladas por estudiantes de distintos niveles y resultados de innovación tecnológica.',
+        'gitts_telefono' => '(+507) 560-3061',
+        'gitts_email_contacto' => 'gitts@utp.ac.pa',
+        'gitts_direccion' => 'Edificio de Investigación e Innovación (ELII), Piso 2',
+        'gitts_campus' => 'Campus Víctor Levi Sasso, Universidad Tecnológica de Panamá, Ciudad de Panamá',
+        'gitts_institucion' => 'Universidad Tecnológica de Panamá',
+        'gitts_color_primary' => '#165288',
+        'gitts_color_secondary' => '#52975D',
+        'gitts_color_accent' => '#E83C56',
+        'gitts_intro_noticias' => 'Conferencias, premios, defensas de tesis, workshops y eventos del grupo.',
+        'gitts_sec_valores' => 'Nuestros Valores',
+        'gitts_sec_especializacion' => 'Áreas de Especialización',
+        'gitts_sec_actualidad' => 'Actualidad',
+        'gitts_sec_valores_fund' => 'Valores Fundamentales',
+        'gitts_sec_objetivos' => 'Objetivos',
+        'gitts_sec_areas_inv' => 'Áreas de Investigación',
+        'gitts_sec_aplicaciones' => 'Aplicaciones',
+        'gitts_sec_proyectos' => 'Proyectos Financiados',
+        'gitts_sec_recientes' => 'Más Recientes',
+        'gitts_sec_citadas' => 'Más Citadas',
+        'gitts_sec_lista_completa' => 'Lista Completa',
+        'gitts_sec_tesis' => 'Tesis',
+        'gitts_sec_desarrollos' => 'Desarrollos Aplicados',
+        'gitts_sec_laboratorios' => 'Nuestros Laboratorios',
+        'gitts_sec_equipamiento' => 'Equipamiento Principal',
+        'gitts_sec_capacidades' => 'Capacidades Técnicas',
+        'gitts_sec_ubicacion' => 'Ubicación',
+        'gitts_sec_miembros_principales' => 'Miembros Principales',
+        'gitts_sec_colaboradores' => 'Colaboradores',
+        'gitts_sec_colaboradores_ext' => 'Colaboradores Externos',
+        'gitts_sec_estudiantes_activos' => 'Estudiantes Activos',
+        'gitts_sec_estudiantes_egresados' => 'Estudiantes Egresados',
+        'gitts_sec_como_colaborar' => 'Cómo Colaborar',
+        'gitts_sec_servicios' => 'Servicios Institucionales',
+    ];
+    foreach ($defaults as $key => $value) {
+        if (get_option($key) === false) {
+            update_option($key, $value);
+        }
+    }
+}
+add_action('after_switch_theme', 'gitts_theme_defaults');
+
+// ── Colores dinámicos: inyectar CSS variables desde opciones ──
+function gitts_dynamic_colors() {
+    $primary   = get_option('gitts_color_primary', '#165288');
+    $secondary = get_option('gitts_color_secondary', '#52975D');
+    $accent    = get_option('gitts_color_accent', '#E83C56');
+
+    // Derivar colores oscuros (mezcla con negro al 30%)
+    $primary_dark = gitts_darken_hex($primary, 0.3);
+    $secondary_dark = gitts_darken_hex($secondary, 0.3);
+    $accent_dark = gitts_darken_hex($accent, 0.3);
+    ?>
+    <style>
+    :root {
+        --gitts-primary: <?php echo $primary; ?>;
+        --gitts-primary-dark: <?php echo $primary_dark; ?>;
+        --gitts-secondary: <?php echo $secondary; ?>;
+        --gitts-accent: <?php echo $accent; ?>;
+    }
+    .navbar { background-color: var(--gitts-primary) !important; }
+    .page-header { background: linear-gradient(135deg, <?php echo $primary_dark; ?> 0%, <?php echo $primary; ?> 60%, #495C9B 100%); }
+    .footer-gradient { background: linear-gradient(135deg, <?php echo $primary_dark; ?> 0%, <?php echo $primary; ?> 100%); }
+    footer.footer-center { background-color: <?php echo $primary_dark; ?> !important; }
+    </style>
+    <?php
+}
+add_action('wp_head', 'gitts_dynamic_colors', 99);
+
+// Helper: oscurecer un color hex
+function gitts_darken_hex($hex, $factor) {
+    $hex = ltrim($hex, '#');
+    $r = max(0, floor(hexdec(substr($hex, 0, 2)) * (1 - $factor)));
+    $g = max(0, floor(hexdec(substr($hex, 2, 2)) * (1 - $factor)));
+    $b = max(0, floor(hexdec(substr($hex, 4, 2)) * (1 - $factor)));
+    return sprintf('#%02x%02x%02x', $r, $g, $b);
 }
