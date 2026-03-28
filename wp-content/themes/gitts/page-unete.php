@@ -92,6 +92,10 @@
                             <svg class="w-5 h-5 text-primary flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"/></svg>
                             <p class="text-sm text-slate-700"><?php echo esc_html(get_option('gitts_telefono', '')); ?></p>
                         </div>
+                        <div class="flex gap-3 items-center">
+                            <svg class="w-5 h-5 text-primary flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"/></svg>
+                            <a href="mailto:<?php echo esc_attr(get_option('gitts_email_contacto', 'gitts@utp.ac.pa')); ?>" class="text-sm text-primary hover:underline"><?php echo esc_html(get_option('gitts_email_contacto', 'gitts@utp.ac.pa')); ?></a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -100,9 +104,28 @@
             <div>
                 <div class="card bg-white border border-slate-200">
                     <div class="card-body p-8">
-                        <h2 class="text-slate-800 font-semibold text-xl mb-2 text-center">¿Interesado?</h2>
-                        <p class="text-center text-slate-500 text-sm mb-6">Envíanos tu información y nos pondremos en contacto.</p>
-                        <form method="post" action="#" class="space-y-4">
+                        <h2 class="text-slate-800 font-semibold text-xl mb-2 text-center"><?php echo esc_html(get_option('gitts_unete_form_titulo', '¿Interesado?')); ?></h2>
+                        <p class="text-center text-slate-500 text-sm mb-6"><?php echo esc_html(get_option('gitts_unete_form_subtitulo', 'Envíanos tu información y nos pondremos en contacto.')); ?></p>
+                        <?php
+                        if (isset($_POST['gitts_unete_submit'])) {
+                            $to = get_option('gitts_email_contacto', 'gitts@utp.ac.pa');
+                            $nombre = sanitize_text_field($_POST['nombre'] ?? '');
+                            $email_from = sanitize_email($_POST['email'] ?? '');
+                            $tipo = sanitize_text_field($_POST['tipo'] ?? 'No especificado');
+                            $mensaje = sanitize_textarea_field($_POST['mensaje'] ?? '');
+                            $subject = 'Nueva solicitud de colaboración — ' . $nombre;
+                            $body = "Nombre: $nombre\nCorreo: $email_from\nTipo: $tipo\n\nMensaje:\n$mensaje";
+                            $headers = ['From: ' . $nombre . ' <' . $email_from . '>', 'Reply-To: ' . $email_from];
+                            $sent = wp_mail($to, $subject, $body, $headers);
+                            if ($sent) {
+                                echo '<div class="alert alert-success mb-4 text-sm"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg> Solicitud enviada correctamente. Nos pondremos en contacto.</div>';
+                            } else {
+                                echo '<div class="alert alert-error mb-4 text-sm">Error al enviar. Intenta de nuevo o escríbenos a ' . esc_html($to) . '</div>';
+                            }
+                        }
+                        ?>
+                        <form method="post" action="" class="space-y-4">
+                            <input type="hidden" name="gitts_unete_submit" value="1">
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-medium text-sm">Nombre Completo</span></label>
                                 <input type="text" name="nombre" placeholder="Tu nombre" class="input input-bordered w-full" required>
@@ -120,7 +143,10 @@
                                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg>
                                     </div>
                                     <ul tabindex="0" class="dropdown-content menu bg-white rounded-lg z-[1] w-full mt-1 p-1 shadow-lg border border-slate-200">
-                                        <?php foreach (['Tesis de pregrado','Tesis de maestría / doctorado','Investigación conjunta','Patrocinador','Aliado estratégico'] as $opt) : ?>
+                                        <?php
+                                        $opciones_form = json_decode(get_option('gitts_unete_opciones', '[]'), true);
+                                        if (!$opciones_form) $opciones_form = [['titulo'=>'Tesis de pregrado'],['titulo'=>'Tesis de maestría / doctorado'],['titulo'=>'Investigación conjunta'],['titulo'=>'Patrocinador'],['titulo'=>'Aliado estratégico']];
+                                        foreach ($opciones_form as $opt_item) : $opt = $opt_item['titulo']; ?>
                                         <li><a class="text-sm text-slate-600 hover:text-primary hover:bg-primary/5 rounded-md filter-option" data-value="<?php echo $opt; ?>"><?php echo $opt; ?></a></li>
                                         <?php endforeach; ?>
                                     </ul>
@@ -130,7 +156,7 @@
                                 <label class="label"><span class="label-text font-medium text-sm">Mensaje</span></label>
                                 <textarea name="mensaje" class="textarea textarea-bordered w-full h-28" placeholder="Cuéntanos sobre tu interés..."></textarea>
                             </div>
-                            <button type="submit" class="btn w-full text-sm font-medium tracking-wide bg-primary text-white border-none hover:bg-primary/90">Enviar Solicitud</button>
+                            <button type="submit" class="btn w-full text-sm font-medium tracking-wide bg-primary text-white border-none hover:bg-primary/90"><?php echo esc_html(get_option('gitts_unete_form_btn', 'Enviar Solicitud')); ?></button>
                         </form>
                     </div>
                 </div>

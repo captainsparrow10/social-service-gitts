@@ -146,7 +146,7 @@ function gitts_register_cpts() {
         'public' => true, 'has_archive' => true,
         'menu_icon' => 'dashicons-portfolio',
         'supports' => ['title','editor','thumbnail','excerpt'],
-        'rewrite' => ['slug' => 'proyectos'],
+        'rewrite' => ['slug' => 'proyectos', 'with_front' => false],
         'show_in_rest' => true,
     ]);
 
@@ -155,10 +155,10 @@ function gitts_register_cpts() {
             'name' => 'Equipo', 'singular_name' => 'Miembro',
             'add_new' => 'Agregar Miembro',
         ],
-        'public' => true, 'has_archive' => true,
+        'public' => true, 'has_archive' => false,
         'menu_icon' => 'dashicons-groups',
         'supports' => ['title','editor','thumbnail','excerpt'],
-        'rewrite' => ['slug' => 'equipo'],
+        'rewrite' => ['slug' => 'miembros', 'with_front' => false],
         'show_in_rest' => true,
     ]);
 
@@ -167,7 +167,7 @@ function gitts_register_cpts() {
         'labels' => ['name' => 'Publicaciones', 'singular_name' => 'Publicación', 'add_new_item' => 'Nueva Publicación', 'edit_item' => 'Editar Publicación'],
         'public' => true, 'has_archive' => false, 'menu_icon' => 'dashicons-book-alt',
         'supports' => ['title', 'editor', 'thumbnail'], 'show_in_rest' => true,
-        'rewrite' => ['slug' => 'publicaciones'],
+        'rewrite' => ['slug' => 'produccion-cientifica', 'with_front' => false],
     ]);
 
     // Valor institucional
@@ -349,10 +349,25 @@ function gitts_publicacion_fields_cb($post) {
     }
     // Destacada (select)
     $destacada = get_post_meta($post->ID, 'pub_destacada', true);
-    echo "<p><strong>Destacada:</strong><br><select name='pub_destacada' class='widefat'>";
+    echo "<p><strong>Destacada (más citadas):</strong><br><select name='pub_destacada' class='widefat'>";
     echo "<option value='no'" . selected($destacada, 'no', false) . ">No</option>";
     echo "<option value='si'" . selected($destacada, 'si', false) . ">Sí</option>";
     echo "</select></p>";
+    // Destacada reciente
+    $dest_rec = get_post_meta($post->ID, 'pub_destacada_reciente', true);
+    echo "<p><strong>Destacada reciente (publicaciones):</strong><br><select name='pub_destacada_reciente' class='widefat'>";
+    echo "<option value='no'" . selected($dest_rec, 'no', false) . ">No</option>";
+    echo "<option value='si'" . selected($dest_rec, 'si', false) . ">Sí</option>";
+    echo "</select></p>";
+    // Tesis destacada
+    $tesis_dest = get_post_meta($post->ID, 'pub_tesis_destacada', true);
+    echo "<p><strong>Tesis destacada:</strong><br><select name='pub_tesis_destacada' class='widefat'>";
+    echo "<option value='no'" . selected($tesis_dest, 'no', false) . ">No</option>";
+    echo "<option value='si'" . selected($tesis_dest, 'si', false) . ">Sí</option>";
+    echo "</select></p>";
+    // Resumen (textarea)
+    $resumen = get_post_meta($post->ID, 'pub_resumen', true);
+    echo "<p><strong>Resumen (tesis):</strong><br><textarea name='pub_resumen' class='widefat' rows='4'>" . esc_textarea($resumen) . "</textarea></p>";
 }
 
 function gitts_simple_fields_cb($post) {
@@ -386,14 +401,14 @@ function gitts_save_fields($post_id) {
         'cargo_oficial','email_institucional','link_linkedin','link_orcid','link_researchgate',
         'link_apersei','link_scholar','orden',
         'pub_autores','pub_revista','pub_anio','pub_doi','pub_director','pub_nivel',
-        'pub_estado','pub_destacada','pub_citaciones',
+        'pub_estado','pub_destacada','pub_citaciones','pub_destacada_reciente','pub_tesis_destacada',
     ];
     foreach ($text_fields as $f) {
         if (isset($_POST[$f])) update_post_meta($post_id, $f, sanitize_text_field($_POST[$f]));
     }
 
     // Campos textarea (sanitize_textarea_field — preserva saltos de línea)
-    $textarea_fields = ['bio_extendida', 'descripcion', 'lab_descripcion', 'lab_equipamiento'];
+    $textarea_fields = ['bio_extendida', 'descripcion', 'lab_descripcion', 'lab_equipamiento', 'pub_resumen'];
     foreach ($textarea_fields as $f) {
         if (isset($_POST[$f])) update_post_meta($post_id, $f, sanitize_textarea_field($_POST[$f]));
     }
@@ -615,29 +630,24 @@ add_action('admin_menu', 'gitts_clean_admin_menu');
 // ── Theme Options Page ──
 function gitts_theme_options_page() {
     add_menu_page('GITTS Settings', 'GITTS Settings', 'manage_options', 'gitts-settings', 'gitts_settings_render', 'dashicons-admin-generic', 3);
+    add_submenu_page('gitts-settings', 'Inicio', 'Inicio', 'manage_options', 'gitts-inicio', 'gitts_inicio_render');
+    add_submenu_page('gitts-settings', 'Quiénes Somos', 'Quiénes Somos', 'manage_options', 'gitts-quienes-somos', 'gitts_quienes_somos_render');
+    add_submenu_page('gitts-settings', 'Noticias', 'Noticias', 'manage_options', 'edit.php');
+    add_submenu_page('gitts-settings', 'Nuestro Equipo', 'Nuestro Equipo', 'manage_options', 'edit.php?post_type=miembro');
+    add_submenu_page('gitts-settings', 'Producción Científica', 'Producción Científica', 'manage_options', 'edit.php?post_type=publicacion');
+    add_submenu_page('gitts-settings', 'Infraestructura', 'Infraestructura', 'manage_options', 'gitts-infraestructura', 'gitts_infraestructura_render');
+    add_submenu_page('gitts-settings', 'Investigación', 'Investigación', 'manage_options', 'gitts-investigacion', 'gitts_investigacion_render');
+    add_submenu_page('gitts-settings', 'Únete', 'Únete', 'manage_options', 'gitts-unete', 'gitts_unete_render');
 }
 add_action('admin_menu', 'gitts_theme_options_page');
 
 function gitts_settings_render() {
     if (isset($_POST['gitts_settings_nonce']) && wp_verify_nonce($_POST['gitts_settings_nonce'], 'gitts_settings_save')) {
         $opts = [
-            'gitts_mision','gitts_vision','gitts_telefono','gitts_email_contacto','gitts_direccion','gitts_campus',
-            'gitts_hero_titulo','gitts_hero_subtitulo',
-            'gitts_intro_quienes','gitts_intro_unete','gitts_intro_miembros','gitts_intro_produccion',
-            'gitts_intro_infraestructura','gitts_intro_investigacion',
-            'gitts_intro_valores','gitts_importancia_titulo','gitts_importancia_texto',
-            'gitts_descripcion_grupo','gitts_intro_prod_header','gitts_intro_invest_header',
             'gitts_institucion',
             'gitts_color_primary','gitts_color_secondary','gitts_color_accent',
-            'gitts_intro_noticias',
-            'gitts_sec_valores','gitts_sec_especializacion','gitts_sec_actualidad',
-            'gitts_sec_laboratorios','gitts_sec_equipamiento','gitts_sec_capacidades','gitts_sec_ubicacion',
-            'gitts_sec_areas_inv','gitts_sec_aplicaciones','gitts_sec_proyectos',
-            'gitts_sec_recientes','gitts_sec_citadas','gitts_sec_lista_completa','gitts_sec_tesis','gitts_sec_desarrollos',
-            'gitts_sec_miembros_principales','gitts_sec_colaboradores','gitts_sec_colaboradores_ext',
-            'gitts_sec_estudiantes_activos','gitts_sec_estudiantes_egresados',
-            'gitts_sec_como_colaborar','gitts_sec_servicios',
-            'gitts_sec_valores_fund','gitts_sec_objetivos',
+            'gitts_descripcion_grupo',
+            'gitts_telefono','gitts_email_contacto','gitts_direccion','gitts_campus',
         ];
         foreach ($opts as $opt) {
             if (isset($_POST[$opt])) update_option($opt, wp_kses_post($_POST[$opt]));
@@ -646,79 +656,16 @@ function gitts_settings_render() {
     }
     ?>
     <div class="wrap">
-        <h1>GITTS — Configuración del Tema</h1>
+        <h1>GITTS — Configuración General</h1>
+        <p>Configuración global del tema. El contenido de cada página se gestiona desde sus submenús respectivos.</p>
         <form method="post">
             <?php wp_nonce_field('gitts_settings_save', 'gitts_settings_nonce'); ?>
-            <h2>Hero del Home</h2>
-            <table class="form-table">
-                <tr><th>Título</th><td><input type="text" name="gitts_hero_titulo" value="<?php echo esc_attr(get_option('gitts_hero_titulo', '')); ?>" class="large-text"></td></tr>
-                <tr><th>Subtítulo</th><td><textarea name="gitts_hero_subtitulo" class="large-text" rows="2"><?php echo esc_textarea(get_option('gitts_hero_subtitulo', '')); ?></textarea></td></tr>
-            </table>
-            <h2>Secciones del Home</h2>
-            <table class="form-table">
-                <tr><th>Subtítulo sección Valores</th><td><textarea name="gitts_intro_valores" class="large-text" rows="2"><?php echo esc_textarea(get_option('gitts_intro_valores', '')); ?></textarea></td></tr>
-                <tr><th>Título sección Importancia</th><td><input type="text" name="gitts_importancia_titulo" value="<?php echo esc_attr(get_option('gitts_importancia_titulo', '')); ?>" class="large-text"></td></tr>
-                <tr><th>Texto sección Importancia</th><td><textarea name="gitts_importancia_texto" class="large-text" rows="4"><?php echo esc_textarea(get_option('gitts_importancia_texto', '')); ?></textarea></td></tr>
-            </table>
-            <h2>Contenido Institucional</h2>
-            <table class="form-table">
-                <tr><th>Misión</th><td><textarea name="gitts_mision" class="large-text" rows="4"><?php echo esc_textarea(get_option('gitts_mision', '')); ?></textarea></td></tr>
-                <tr><th>Visión</th><td><textarea name="gitts_vision" class="large-text" rows="4"><?php echo esc_textarea(get_option('gitts_vision', '')); ?></textarea></td></tr>
-                <tr><th>Intro Quiénes Somos</th><td><textarea name="gitts_intro_quienes" class="large-text" rows="4"><?php echo esc_textarea(get_option('gitts_intro_quienes', '')); ?></textarea></td></tr>
-                <tr><th>Intro Únete</th><td><textarea name="gitts_intro_unete" class="large-text" rows="4"><?php echo esc_textarea(get_option('gitts_intro_unete', '')); ?></textarea></td></tr>
-                <tr><th>Intro Miembros</th><td><textarea name="gitts_intro_miembros" class="large-text" rows="3"><?php echo esc_textarea(get_option('gitts_intro_miembros', '')); ?></textarea></td></tr>
-                <tr><th>Intro Producción</th><td><textarea name="gitts_intro_produccion" class="large-text" rows="3"><?php echo esc_textarea(get_option('gitts_intro_produccion', '')); ?></textarea></td></tr>
-                <tr><th>Intro Infraestructura</th><td><textarea name="gitts_intro_infraestructura" class="large-text" rows="3"><?php echo esc_textarea(get_option('gitts_intro_infraestructura', '')); ?></textarea></td></tr>
-                <tr><th>Intro Investigación</th><td><textarea name="gitts_intro_investigacion" class="large-text" rows="3"><?php echo esc_textarea(get_option('gitts_intro_investigacion', '')); ?></textarea></td></tr>
-            </table>
-            <h2>Headers de Páginas</h2>
-            <table class="form-table">
-                <tr><th>Subtítulo header Investigación</th><td><textarea name="gitts_intro_invest_header" class="large-text" rows="2"><?php echo esc_textarea(get_option('gitts_intro_invest_header', '')); ?></textarea></td></tr>
-                <tr><th>Subtítulo header Producción Científica</th><td><textarea name="gitts_intro_prod_header" class="large-text" rows="2"><?php echo esc_textarea(get_option('gitts_intro_prod_header', '')); ?></textarea></td></tr>
-            </table>
-            <h2>Títulos de Sección</h2>
-            <p class="description">Personaliza los títulos de cada sección visible en el sitio. Deja vacío para usar el texto por defecto.</p>
-            <table class="form-table">
-                <tr><th colspan="2" style="padding-bottom:0"><strong>— Home —</strong></th></tr>
-                <tr><th>Valores</th><td><input type="text" name="gitts_sec_valores" value="<?php echo esc_attr(get_option('gitts_sec_valores', '')); ?>" class="large-text" placeholder="Nuestros Valores"></td></tr>
-                <tr><th>Especialización</th><td><input type="text" name="gitts_sec_especializacion" value="<?php echo esc_attr(get_option('gitts_sec_especializacion', '')); ?>" class="large-text" placeholder="Áreas de Especialización"></td></tr>
-                <tr><th>Actualidad</th><td><input type="text" name="gitts_sec_actualidad" value="<?php echo esc_attr(get_option('gitts_sec_actualidad', '')); ?>" class="large-text" placeholder="Actualidad"></td></tr>
-                <tr><th colspan="2" style="padding-bottom:0"><strong>— Quiénes Somos —</strong></th></tr>
-                <tr><th>Valores Fundamentales</th><td><input type="text" name="gitts_sec_valores_fund" value="<?php echo esc_attr(get_option('gitts_sec_valores_fund', '')); ?>" class="large-text" placeholder="Valores Fundamentales"></td></tr>
-                <tr><th>Objetivos</th><td><input type="text" name="gitts_sec_objetivos" value="<?php echo esc_attr(get_option('gitts_sec_objetivos', '')); ?>" class="large-text" placeholder="Objetivos"></td></tr>
-                <tr><th colspan="2" style="padding-bottom:0"><strong>— Investigación —</strong></th></tr>
-                <tr><th>Áreas de Investigación</th><td><input type="text" name="gitts_sec_areas_inv" value="<?php echo esc_attr(get_option('gitts_sec_areas_inv', '')); ?>" class="large-text" placeholder="Áreas de Investigación"></td></tr>
-                <tr><th>Aplicaciones</th><td><input type="text" name="gitts_sec_aplicaciones" value="<?php echo esc_attr(get_option('gitts_sec_aplicaciones', '')); ?>" class="large-text" placeholder="Aplicaciones"></td></tr>
-                <tr><th>Proyectos</th><td><input type="text" name="gitts_sec_proyectos" value="<?php echo esc_attr(get_option('gitts_sec_proyectos', '')); ?>" class="large-text" placeholder="Proyectos Financiados"></td></tr>
-                <tr><th colspan="2" style="padding-bottom:0"><strong>— Producción Científica —</strong></th></tr>
-                <tr><th>Más Recientes</th><td><input type="text" name="gitts_sec_recientes" value="<?php echo esc_attr(get_option('gitts_sec_recientes', '')); ?>" class="large-text" placeholder="Más Recientes"></td></tr>
-                <tr><th>Más Citadas</th><td><input type="text" name="gitts_sec_citadas" value="<?php echo esc_attr(get_option('gitts_sec_citadas', '')); ?>" class="large-text" placeholder="Más Citadas"></td></tr>
-                <tr><th>Lista Completa</th><td><input type="text" name="gitts_sec_lista_completa" value="<?php echo esc_attr(get_option('gitts_sec_lista_completa', '')); ?>" class="large-text" placeholder="Lista Completa"></td></tr>
-                <tr><th>Tesis</th><td><input type="text" name="gitts_sec_tesis" value="<?php echo esc_attr(get_option('gitts_sec_tesis', '')); ?>" class="large-text" placeholder="Tesis"></td></tr>
-                <tr><th>Desarrollos</th><td><input type="text" name="gitts_sec_desarrollos" value="<?php echo esc_attr(get_option('gitts_sec_desarrollos', '')); ?>" class="large-text" placeholder="Desarrollos Aplicados"></td></tr>
-                <tr><th colspan="2" style="padding-bottom:0"><strong>— Infraestructura —</strong></th></tr>
-                <tr><th>Laboratorios</th><td><input type="text" name="gitts_sec_laboratorios" value="<?php echo esc_attr(get_option('gitts_sec_laboratorios', '')); ?>" class="large-text" placeholder="Nuestros Laboratorios"></td></tr>
-                <tr><th>Equipamiento</th><td><input type="text" name="gitts_sec_equipamiento" value="<?php echo esc_attr(get_option('gitts_sec_equipamiento', '')); ?>" class="large-text" placeholder="Equipamiento Principal"></td></tr>
-                <tr><th>Capacidades</th><td><input type="text" name="gitts_sec_capacidades" value="<?php echo esc_attr(get_option('gitts_sec_capacidades', '')); ?>" class="large-text" placeholder="Capacidades Técnicas"></td></tr>
-                <tr><th>Ubicación</th><td><input type="text" name="gitts_sec_ubicacion" value="<?php echo esc_attr(get_option('gitts_sec_ubicacion', '')); ?>" class="large-text" placeholder="Ubicación"></td></tr>
-                <tr><th colspan="2" style="padding-bottom:0"><strong>— Equipo —</strong></th></tr>
-                <tr><th>Miembros Principales</th><td><input type="text" name="gitts_sec_miembros_principales" value="<?php echo esc_attr(get_option('gitts_sec_miembros_principales', '')); ?>" class="large-text" placeholder="Miembros Principales"></td></tr>
-                <tr><th>Colaboradores</th><td><input type="text" name="gitts_sec_colaboradores" value="<?php echo esc_attr(get_option('gitts_sec_colaboradores', '')); ?>" class="large-text" placeholder="Colaboradores"></td></tr>
-                <tr><th>Colaboradores Externos</th><td><input type="text" name="gitts_sec_colaboradores_ext" value="<?php echo esc_attr(get_option('gitts_sec_colaboradores_ext', '')); ?>" class="large-text" placeholder="Colaboradores Externos"></td></tr>
-                <tr><th>Estudiantes Activos</th><td><input type="text" name="gitts_sec_estudiantes_activos" value="<?php echo esc_attr(get_option('gitts_sec_estudiantes_activos', '')); ?>" class="large-text" placeholder="Estudiantes Activos"></td></tr>
-                <tr><th>Estudiantes Egresados</th><td><input type="text" name="gitts_sec_estudiantes_egresados" value="<?php echo esc_attr(get_option('gitts_sec_estudiantes_egresados', '')); ?>" class="large-text" placeholder="Estudiantes Egresados"></td></tr>
-                <tr><th colspan="2" style="padding-bottom:0"><strong>— Únete —</strong></th></tr>
-                <tr><th>Cómo Colaborar</th><td><input type="text" name="gitts_sec_como_colaborar" value="<?php echo esc_attr(get_option('gitts_sec_como_colaborar', '')); ?>" class="large-text" placeholder="Cómo Colaborar"></td></tr>
-                <tr><th>Servicios</th><td><input type="text" name="gitts_sec_servicios" value="<?php echo esc_attr(get_option('gitts_sec_servicios', '')); ?>" class="large-text" placeholder="Servicios Institucionales"></td></tr>
-                <tr><th colspan="2" style="padding-bottom:0"><strong>— Noticias —</strong></th></tr>
-                <tr><th>Subtítulo Noticias</th><td><input type="text" name="gitts_intro_noticias" value="<?php echo esc_attr(get_option('gitts_intro_noticias', '')); ?>" class="large-text" placeholder="Conferencias, premios, defensas de tesis, workshops y eventos del grupo."></td></tr>
-            </table>
             <h2>Identidad</h2>
             <table class="form-table">
                 <tr><th>Institución</th><td><input type="text" name="gitts_institucion" value="<?php echo esc_attr(get_option('gitts_institucion', '')); ?>" class="large-text" placeholder="Universidad Tecnológica de Panamá"></td></tr>
             </table>
             <h2>Colores del Tema</h2>
-            <p class="description">Personaliza los colores principales del sitio. Deja vacío para usar los colores por defecto.</p>
+            <p class="description">Personaliza los colores principales del sitio.</p>
             <table class="form-table">
                 <tr><th>Color Primario (navy)</th><td><input type="color" name="gitts_color_primary" value="<?php echo esc_attr(get_option('gitts_color_primary', '#165288')); ?>"> <code><?php echo esc_html(get_option('gitts_color_primary', '#165288')); ?></code></td></tr>
                 <tr><th>Color Secundario (green)</th><td><input type="color" name="gitts_color_secondary" value="<?php echo esc_attr(get_option('gitts_color_secondary', '#52975D')); ?>"> <code><?php echo esc_html(get_option('gitts_color_secondary', '#52975D')); ?></code></td></tr>
@@ -735,6 +682,390 @@ function gitts_settings_render() {
                 <tr><th>Dirección</th><td><textarea name="gitts_direccion" class="large-text" rows="2"><?php echo esc_textarea(get_option('gitts_direccion', '')); ?></textarea></td></tr>
                 <tr><th>Campus</th><td><input type="text" name="gitts_campus" value="<?php echo esc_attr(get_option('gitts_campus', '')); ?>" class="regular-text"></td></tr>
             </table>
+            <?php submit_button('Guardar Configuración'); ?>
+        </form>
+    </div>
+    <?php
+}
+
+// ── Página dedicada: Únete ──
+function gitts_unete_render() {
+    if (isset($_POST['gitts_unete_nonce']) && wp_verify_nonce($_POST['gitts_unete_nonce'], 'gitts_unete_save')) {
+        $opts = ['gitts_intro_unete','gitts_sec_como_colaborar','gitts_sec_servicios','gitts_unete_form_titulo','gitts_unete_form_subtitulo','gitts_unete_form_btn','gitts_email_contacto'];
+        foreach ($opts as $opt) {
+            if (isset($_POST[$opt])) update_option($opt, wp_kses_post($_POST[$opt]));
+        }
+        // Guardar opciones del formulario como JSON
+        if (isset($_POST['gitts_unete_opciones']) && is_array($_POST['gitts_unete_opciones'])) {
+            $items = [];
+            foreach ($_POST['gitts_unete_opciones'] as $item) {
+                $t = sanitize_text_field($item['titulo'] ?? '');
+                if ($t) $items[] = ['titulo' => $t];
+            }
+            update_option('gitts_unete_opciones', wp_json_encode($items, JSON_UNESCAPED_UNICODE));
+        }
+        echo '<div class="notice notice-success"><p>Configuración de Únete guardada.</p></div>';
+    }
+    ?>
+    <div class="wrap">
+        <h1>GITTS — Únete</h1>
+        <p>Gestiona el contenido de la página Únete a Nosotros desde aquí.</p>
+        <form method="post">
+            <?php wp_nonce_field('gitts_unete_save', 'gitts_unete_nonce'); ?>
+
+            <h2>Contenido de la página</h2>
+            <table class="form-table">
+                <tr><th>Texto de introducción</th><td><textarea name="gitts_intro_unete" class="large-text" rows="4"><?php echo esc_textarea(get_option('gitts_intro_unete', '')); ?></textarea></td></tr>
+                <tr><th>Título "Cómo Colaborar"</th><td><input type="text" name="gitts_sec_como_colaborar" value="<?php echo esc_attr(get_option('gitts_sec_como_colaborar', 'Cómo Colaborar')); ?>" class="large-text"></td></tr>
+                <tr><th>Título "Servicios"</th><td><input type="text" name="gitts_sec_servicios" value="<?php echo esc_attr(get_option('gitts_sec_servicios', 'Servicios Institucionales')); ?>" class="large-text"></td></tr>
+            </table>
+
+            <h2>Contacto</h2>
+            <table class="form-table">
+                <tr><th>Correo de recepción</th><td><input type="email" name="gitts_email_contacto" value="<?php echo esc_attr(get_option('gitts_email_contacto', 'gitts@utp.ac.pa')); ?>" class="regular-text"><p class="description">Los formularios se envían a este correo.</p></td></tr>
+            </table>
+
+            <h2>Formulario de contacto</h2>
+            <table class="form-table">
+                <tr><th>Título del formulario</th><td><input type="text" name="gitts_unete_form_titulo" value="<?php echo esc_attr(get_option('gitts_unete_form_titulo', '¿Interesado?')); ?>" class="large-text"></td></tr>
+                <tr><th>Subtítulo del formulario</th><td><input type="text" name="gitts_unete_form_subtitulo" value="<?php echo esc_attr(get_option('gitts_unete_form_subtitulo', 'Envíanos tu información y nos pondremos en contacto.')); ?>" class="large-text"></td></tr>
+                <tr><th>Texto del botón</th><td><input type="text" name="gitts_unete_form_btn" value="<?php echo esc_attr(get_option('gitts_unete_form_btn', 'Enviar Solicitud')); ?>" class="large-text"></td></tr>
+            </table>
+
+            <h2>Opciones de "Tipo de Colaboración"</h2>
+            <p class="description">Las opciones que aparecen en el dropdown del formulario.</p>
+            <div id="gitts-opciones-repeater">
+            <?php
+            $opciones = json_decode(get_option('gitts_unete_opciones', '[]'), true);
+            if (!$opciones) $opciones = [
+                ['titulo'=>'Tesis de pregrado'],['titulo'=>'Tesis de maestría / doctorado'],
+                ['titulo'=>'Investigación conjunta'],['titulo'=>'Patrocinador'],['titulo'=>'Aliado estratégico'],
+            ];
+            foreach ($opciones as $i => $o) : ?>
+                <div class="gitts-repeater-item" style="border:1px solid #ccd0d4;padding:8px 12px;margin:4px 0;background:#f9f9f9;border-radius:4px;display:flex;align-items:center;gap:8px;">
+                    <input type="text" name="gitts_unete_opciones[<?php echo $i; ?>][titulo]" value="<?php echo esc_attr($o['titulo']); ?>" class="regular-text">
+                    <button type="button" class="button gitts-remove-item" style="color:#a00;">×</button>
+                </div>
+            <?php endforeach; ?>
+            </div>
+            <button type="button" class="button" id="gitts-add-opcion">+ Agregar Opción</button>
+
+            <script>
+            (function(){
+                document.getElementById('gitts-add-opcion').addEventListener('click', function(){
+                    var container = document.getElementById('gitts-opciones-repeater');
+                    var idx = container.querySelectorAll('.gitts-repeater-item').length;
+                    var div = document.createElement('div');
+                    div.className = 'gitts-repeater-item';
+                    div.style.cssText = 'border:1px solid #ccd0d4;padding:8px 12px;margin:4px 0;background:#f9f9f9;border-radius:4px;display:flex;align-items:center;gap:8px;';
+                    div.innerHTML = '<input type="text" name="gitts_unete_opciones['+idx+'][titulo]" class="regular-text"><button type="button" class="button gitts-remove-item" style="color:#a00;">×</button>';
+                    container.appendChild(div);
+                });
+                document.addEventListener('click', function(e){
+                    if(e.target.classList.contains('gitts-remove-item')) e.target.closest('.gitts-repeater-item').remove();
+                });
+            })();
+            </script>
+
+            <?php submit_button('Guardar Configuración'); ?>
+        </form>
+
+        <hr>
+        <h2>Gestionar contenido</h2>
+        <h3>Cómo Colaborar</h3>
+        <p><a href="<?php echo admin_url('edit.php?post_type=colaboracion'); ?>" class="button button-primary">Gestionar Colaboraciones</a> <a href="<?php echo admin_url('post-new.php?post_type=colaboracion'); ?>" class="button">+ Nueva Colaboración</a></p>
+        <h3>Servicios Institucionales</h3>
+        <p><a href="<?php echo admin_url('edit.php?post_type=servicio'); ?>" class="button button-primary">Gestionar Servicios</a> <a href="<?php echo admin_url('post-new.php?post_type=servicio'); ?>" class="button">+ Nuevo Servicio</a></p>
+        <p class="description" style="margin-top:16px;">La imagen de la página se cambia desde la <strong>imagen destacada</strong> de la página "Únete a Nosotros" en <a href="<?php echo admin_url('post.php?post=' . (get_page_by_path('unete') ? get_page_by_path('unete')->ID : '') . '&action=edit'); ?>">Editar página</a>.</p>
+    </div>
+    <?php
+}
+
+// ── Página dedicada: Investigación ──
+function gitts_investigacion_render() {
+    ?>
+    <div class="wrap">
+        <h1>GITTS — Investigación</h1>
+        <p>Gestiona el contenido de la página de Investigación desde aquí.</p>
+        <h2>Áreas de Investigación</h2>
+        <p><a href="<?php echo admin_url('edit.php?post_type=linea_inv'); ?>" class="button button-primary">Gestionar Líneas</a> <a href="<?php echo admin_url('post-new.php?post_type=linea_inv'); ?>" class="button">+ Nueva Línea</a></p>
+        <h2>Aplicaciones</h2>
+        <p><a href="<?php echo admin_url('edit.php?post_type=aplicacion'); ?>" class="button button-primary">Gestionar Aplicaciones</a> <a href="<?php echo admin_url('post-new.php?post_type=aplicacion'); ?>" class="button">+ Nueva Aplicación</a></p>
+        <h2>Proyectos Financiados</h2>
+        <p><a href="<?php echo admin_url('edit.php?post_type=proyecto'); ?>" class="button button-primary">Gestionar Proyectos</a> <a href="<?php echo admin_url('post-new.php?post_type=proyecto'); ?>" class="button">+ Nuevo Proyecto</a></p>
+    </div>
+    <?php
+}
+
+// ── Página dedicada: Infraestructura ──
+function gitts_infraestructura_render() {
+    ?>
+    <div class="wrap">
+        <h1>GITTS — Infraestructura</h1>
+        <p>Gestiona el contenido de la página de Infraestructura desde aquí.</p>
+        <h2>Laboratorios</h2>
+        <p><a href="<?php echo admin_url('edit.php?post_type=laboratorio'); ?>" class="button button-primary">Gestionar Laboratorios</a> <a href="<?php echo admin_url('post-new.php?post_type=laboratorio'); ?>" class="button">+ Nuevo Laboratorio</a></p>
+        <h2>Equipamiento Principal</h2>
+        <p><a href="<?php echo admin_url('edit.php?post_type=equipo_lab'); ?>" class="button button-primary">Gestionar Equipamiento</a> <a href="<?php echo admin_url('post-new.php?post_type=equipo_lab'); ?>" class="button">+ Nuevo Equipo</a></p>
+        <h2>Capacidades Técnicas</h2>
+        <p><a href="<?php echo admin_url('edit.php?post_type=capacidad'); ?>" class="button button-primary">Gestionar Capacidades</a> <a href="<?php echo admin_url('post-new.php?post_type=capacidad'); ?>" class="button">+ Nueva Capacidad</a></p>
+    </div>
+    <?php
+}
+
+// ── AJAX: Cargar noticias ──
+function gitts_load_noticias() {
+    $page = intval($_POST['page'] ?? 1);
+    $per_page = intval($_POST['per_page'] ?? 12);
+    $category = sanitize_text_field($_POST['category'] ?? 'all');
+
+    $args = [
+        'post_type' => 'post',
+        'posts_per_page' => $per_page,
+        'paged' => $page,
+        'orderby' => 'date',
+        'order' => 'DESC',
+    ];
+    if ($category !== 'all') {
+        $args['category_name'] = $category;
+    }
+
+    $query = new WP_Query($args);
+    $html = '';
+
+    if ($query->have_posts()) {
+        $row = 0;
+        $col = 0;
+        while ($query->have_posts()) {
+            $query->the_post();
+            $cats = get_the_category();
+            $cat_name = $cats ? $cats[0]->name : 'General';
+            $cat_slug = $cats ? $cats[0]->slug : '';
+            $badge_class = 'badge-outline badge-primary';
+            if (strpos($cat_slug, 'evento') !== false) $badge_class = 'badge-outline badge-secondary';
+            elseif (strpos($cat_slug, 'premio') !== false) $badge_class = 'badge-outline badge-accent';
+            elseif (strpos($cat_slug, 'tesis') !== false) $badge_class = 'badge-outline badge-warning';
+            elseif (strpos($cat_slug, 'pasantia') !== false) $badge_class = 'badge-outline badge-info';
+
+            $delay = $row * 100; // delay por fila, no por columna
+            $thumb = has_post_thumbnail()
+                ? '<figure>' . get_the_post_thumbnail(get_the_ID(), 'medium_large', ['class' => 'w-full h-56 object-cover']) . '</figure>'
+                : '<figure><div class="w-full h-56 bg-gradient-to-br from-slate-800 to-primary"></div></figure>';
+
+            $html .= '<div class="card bg-white" data-aos="fade-up" data-aos-delay="' . $delay . '">'
+                . $thumb
+                . '<div class="card-body p-6">'
+                . '<div class="flex items-center gap-3">'
+                . '<span class="badge ' . $badge_class . ' badge-sm font-normal">' . esc_html($cat_name) . '</span>'
+                . '<span class="text-xs text-slate-400">' . get_the_date('d M Y') . '</span>'
+                . '</div>'
+                . '<h3 class="text-base font-medium text-slate-800 mt-2">' . get_the_title() . '</h3>'
+                . '<p class="text-sm text-slate-500 leading-relaxed">' . wp_trim_words(get_the_excerpt(), 20) . '</p>'
+                . '<div class="card-actions justify-end mt-3">'
+                . '<a href="' . get_the_permalink() . '" class="text-primary text-sm font-medium hover:underline">Leer más →</a>'
+                . '</div></div></div>';
+
+            $col++;
+            if ($col >= 3) { $col = 0; $row++; }
+        }
+        wp_reset_postdata();
+    }
+
+    $has_more = $query->max_num_pages > $page;
+
+    wp_send_json(['html' => $html, 'has_more' => $has_more]);
+}
+add_action('wp_ajax_gitts_load_noticias', 'gitts_load_noticias');
+add_action('wp_ajax_nopriv_gitts_load_noticias', 'gitts_load_noticias');
+
+// ── Página dedicada: Inicio ──
+function gitts_inicio_render() {
+    if (isset($_POST['gitts_inicio_nonce']) && wp_verify_nonce($_POST['gitts_inicio_nonce'], 'gitts_inicio_save')) {
+        $opts = ['gitts_hero_titulo','gitts_hero_subtitulo','gitts_sec_valores','gitts_intro_valores','gitts_sec_especializacion','gitts_sec_actualidad'];
+        foreach ($opts as $opt) {
+            if (isset($_POST[$opt])) update_option($opt, wp_kses_post($_POST[$opt]));
+        }
+        // Guardar especialización repeater
+        if (isset($_POST['gitts_especializacion_data']) && is_array($_POST['gitts_especializacion_data'])) {
+            $items = [];
+            foreach ($_POST['gitts_especializacion_data'] as $item) {
+                $t = sanitize_text_field($item['titulo'] ?? '');
+                if ($t) $items[] = ['titulo' => $t];
+            }
+            update_option('gitts_especializacion_data', wp_json_encode($items, JSON_UNESCAPED_UNICODE));
+        }
+        echo '<div class="notice notice-success"><p>Configuración de Inicio guardada.</p></div>';
+    }
+    ?>
+    <div class="wrap">
+        <h1>GITTS — Inicio</h1>
+        <p>Edita todo el contenido de la página de inicio desde aquí.</p>
+        <form method="post">
+            <?php wp_nonce_field('gitts_inicio_save', 'gitts_inicio_nonce'); ?>
+
+            <h2>Hero</h2>
+            <table class="form-table">
+                <tr><th>Título</th><td><input type="text" name="gitts_hero_titulo" value="<?php echo esc_attr(get_option('gitts_hero_titulo', '')); ?>" class="large-text"><p class="description">Puedes usar HTML (&lt;span class="font-semibold"&gt;texto&lt;/span&gt;) para negritas.</p></td></tr>
+                <tr><th>Subtítulo</th><td><textarea name="gitts_hero_subtitulo" class="large-text" rows="2"><?php echo esc_textarea(get_option('gitts_hero_subtitulo', '')); ?></textarea></td></tr>
+            </table>
+
+            <h2>Sección Valores</h2>
+            <p class="description">Las cards de valores se gestionan desde <a href="<?php echo admin_url('admin.php?page=gitts-quienes-somos'); ?>">Quiénes Somos</a>. Aquí solo editas el título y subtítulo de la sección.</p>
+            <table class="form-table">
+                <tr><th>Título de sección</th><td><input type="text" name="gitts_sec_valores" value="<?php echo esc_attr(get_option('gitts_sec_valores', '')); ?>" class="large-text" placeholder="Nuestros Valores"></td></tr>
+                <tr><th>Subtítulo</th><td><textarea name="gitts_intro_valores" class="large-text" rows="2"><?php echo esc_textarea(get_option('gitts_intro_valores', '')); ?></textarea></td></tr>
+            </table>
+
+            <h2>Áreas de Especialización</h2>
+            <p class="description">Agrega, edita o elimina las etiquetas de especialización.</p>
+            <table class="form-table">
+                <tr><th>Título de sección</th><td><input type="text" name="gitts_sec_especializacion" value="<?php echo esc_attr(get_option('gitts_sec_especializacion', '')); ?>" class="large-text" placeholder="Áreas de Especialización"></td></tr>
+            </table>
+            <div id="gitts-esp-repeater">
+            <?php
+            $esps = json_decode(get_option('gitts_especializacion_data', '[]'), true);
+            if (!$esps) $esps = [];
+            foreach ($esps as $i => $e) : ?>
+                <div class="gitts-repeater-item" style="border:1px solid #ccd0d4;padding:8px 12px;margin:4px 0;background:#f9f9f9;border-radius:4px;display:flex;align-items:center;gap:8px;">
+                    <input type="text" name="gitts_especializacion_data[<?php echo $i; ?>][titulo]" value="<?php echo esc_attr($e['titulo']); ?>" class="regular-text">
+                    <button type="button" class="button gitts-remove-item" style="color:#a00;">×</button>
+                </div>
+            <?php endforeach; ?>
+            </div>
+            <button type="button" class="button" id="gitts-add-esp">+ Agregar Especialización</button>
+
+            <h2>Actualidad</h2>
+            <p class="description">Las noticias se gestionan desde <a href="<?php echo admin_url('edit.php'); ?>">Entradas</a>. Aquí solo editas el título de la sección.</p>
+            <table class="form-table">
+                <tr><th>Título de sección</th><td><input type="text" name="gitts_sec_actualidad" value="<?php echo esc_attr(get_option('gitts_sec_actualidad', '')); ?>" class="large-text" placeholder="Actualidad"></td></tr>
+            </table>
+
+            <script>
+            (function(){
+                document.getElementById('gitts-add-esp').addEventListener('click', function(){
+                    var container = document.getElementById('gitts-esp-repeater');
+                    var idx = container.querySelectorAll('.gitts-repeater-item').length;
+                    var div = document.createElement('div');
+                    div.className = 'gitts-repeater-item';
+                    div.style.cssText = 'border:1px solid #ccd0d4;padding:8px 12px;margin:4px 0;background:#f9f9f9;border-radius:4px;display:flex;align-items:center;gap:8px;';
+                    div.innerHTML = '<input type="text" name="gitts_especializacion_data['+idx+'][titulo]" class="regular-text">'
+                        + '<button type="button" class="button gitts-remove-item" style="color:#a00;">×</button>';
+                    container.appendChild(div);
+                });
+                document.addEventListener('click', function(e){
+                    if(e.target.classList.contains('gitts-remove-item')){
+                        e.target.closest('.gitts-repeater-item').remove();
+                    }
+                });
+            })();
+            </script>
+
+            <?php submit_button('Guardar Configuración'); ?>
+        </form>
+    </div>
+    <?php
+}
+
+// ── Página dedicada: Quiénes Somos ──
+function gitts_quienes_somos_render() {
+    if (isset($_POST['gitts_qs_nonce']) && wp_verify_nonce($_POST['gitts_qs_nonce'], 'gitts_qs_save')) {
+        // Guardar textos
+        if (isset($_POST['gitts_sobre_gitts'])) update_option('gitts_sobre_gitts', wp_kses_post($_POST['gitts_sobre_gitts']));
+        if (isset($_POST['gitts_intro_quienes'])) update_option('gitts_intro_quienes', wp_kses_post($_POST['gitts_intro_quienes']));
+        if (isset($_POST['gitts_mision'])) update_option('gitts_mision', wp_kses_post($_POST['gitts_mision']));
+        if (isset($_POST['gitts_vision'])) update_option('gitts_vision', wp_kses_post($_POST['gitts_vision']));
+        // Guardar repeaters
+        foreach (['gitts_valores_fund_data', 'gitts_objetivos_data'] as $rep_key) {
+            if (isset($_POST[$rep_key]) && is_array($_POST[$rep_key])) {
+                $items = [];
+                foreach ($_POST[$rep_key] as $item) {
+                    $t = sanitize_text_field($item['titulo'] ?? '');
+                    $d = sanitize_textarea_field($item['descripcion'] ?? '');
+                    if ($t) $items[] = ['titulo' => $t, 'descripcion' => $d];
+                }
+                update_option($rep_key, wp_json_encode($items, JSON_UNESCAPED_UNICODE));
+            }
+        }
+        echo '<div class="notice notice-success"><p>Configuración de Quiénes Somos guardada.</p></div>';
+    }
+    ?>
+    <div class="wrap">
+        <h1>GITTS — Quiénes Somos</h1>
+        <p>Edita todo el contenido de la página ¿Quiénes Somos? desde aquí.</p>
+        <form method="post">
+            <?php wp_nonce_field('gitts_qs_save', 'gitts_qs_nonce'); ?>
+
+            <h2>Encabezado de la página</h2>
+            <table class="form-table">
+                <tr><th>Subtítulo del header</th><td><textarea name="gitts_intro_quienes" class="large-text" rows="3"><?php echo esc_textarea(get_option('gitts_intro_quienes', '')); ?></textarea></td></tr>
+            </table>
+
+            <h2>Sobre GITTS</h2>
+            <table class="form-table">
+                <tr><th>Contenido principal</th><td><textarea name="gitts_sobre_gitts" class="large-text" rows="12"><?php echo esc_textarea(get_option('gitts_sobre_gitts', '')); ?></textarea><p class="description">Puedes usar HTML (&lt;p&gt;, &lt;strong&gt;, etc.)</p></td></tr>
+            </table>
+
+            <h2>Misión y Visión</h2>
+            <table class="form-table">
+                <tr><th>Misión</th><td><textarea name="gitts_mision" class="large-text" rows="5"><?php echo esc_textarea(get_option('gitts_mision', '')); ?></textarea></td></tr>
+                <tr><th>Visión</th><td><textarea name="gitts_vision" class="large-text" rows="5"><?php echo esc_textarea(get_option('gitts_vision', '')); ?></textarea></td></tr>
+            </table>
+
+            <h2>Valores Fundamentales</h2>
+            <p class="description">Agrega, edita o elimina valores. Cada uno aparece como una card en la página.</p>
+            <div id="gitts-valores-repeater">
+            <?php
+            $valores = json_decode(get_option('gitts_valores_fund_data', '[]'), true);
+            if (!$valores) $valores = [];
+            foreach ($valores as $i => $v) : ?>
+                <div class="gitts-repeater-item" style="border:1px solid #ccd0d4;padding:12px;margin:8px 0;background:#f9f9f9;border-radius:4px;">
+                    <p><label><strong>Título:</strong></label><br><input type="text" name="gitts_valores_fund_data[<?php echo $i; ?>][titulo]" value="<?php echo esc_attr($v['titulo']); ?>" class="large-text"></p>
+                    <p><label><strong>Descripción:</strong></label><br><textarea name="gitts_valores_fund_data[<?php echo $i; ?>][descripcion]" class="large-text" rows="2"><?php echo esc_textarea($v['descripcion']); ?></textarea></p>
+                    <button type="button" class="button gitts-remove-item" style="color:#a00;">× Eliminar</button>
+                </div>
+            <?php endforeach; ?>
+            </div>
+            <button type="button" class="button" id="gitts-add-valor">+ Agregar Valor</button>
+
+            <h2>Objetivos</h2>
+            <p class="description">Agrega, edita o elimina objetivos. Cada uno aparece como una card en la página.</p>
+            <div id="gitts-objetivos-repeater">
+            <?php
+            $objetivos = json_decode(get_option('gitts_objetivos_data', '[]'), true);
+            if (!$objetivos) $objetivos = [];
+            foreach ($objetivos as $i => $o) : ?>
+                <div class="gitts-repeater-item" style="border:1px solid #ccd0d4;padding:12px;margin:8px 0;background:#f9f9f9;border-radius:4px;">
+                    <p><label><strong>Título:</strong></label><br><input type="text" name="gitts_objetivos_data[<?php echo $i; ?>][titulo]" value="<?php echo esc_attr($o['titulo']); ?>" class="large-text"></p>
+                    <p><label><strong>Descripción:</strong></label><br><textarea name="gitts_objetivos_data[<?php echo $i; ?>][descripcion]" class="large-text" rows="2"><?php echo esc_textarea($o['descripcion']); ?></textarea></p>
+                    <button type="button" class="button gitts-remove-item" style="color:#a00;">× Eliminar</button>
+                </div>
+            <?php endforeach; ?>
+            </div>
+            <button type="button" class="button" id="gitts-add-objetivo">+ Agregar Objetivo</button>
+
+            <script>
+            (function(){
+                function addItem(containerId, fieldName) {
+                    var container = document.getElementById(containerId);
+                    var idx = container.querySelectorAll('.gitts-repeater-item').length;
+                    var div = document.createElement('div');
+                    div.className = 'gitts-repeater-item';
+                    div.style.cssText = 'border:1px solid #ccd0d4;padding:12px;margin:8px 0;background:#f9f9f9;border-radius:4px;';
+                    div.innerHTML = '<p><label><strong>Título:</strong></label><br><input type="text" name="'+fieldName+'['+idx+'][titulo]" class="large-text"></p>'
+                        + '<p><label><strong>Descripción:</strong></label><br><textarea name="'+fieldName+'['+idx+'][descripcion]" class="large-text" rows="2"></textarea></p>'
+                        + '<button type="button" class="button gitts-remove-item" style="color:#a00;">× Eliminar</button>';
+                    container.appendChild(div);
+                }
+                document.getElementById('gitts-add-valor').addEventListener('click', function(){ addItem('gitts-valores-repeater','gitts_valores_fund_data'); });
+                document.getElementById('gitts-add-objetivo').addEventListener('click', function(){ addItem('gitts-objetivos-repeater','gitts_objetivos_data'); });
+                document.addEventListener('click', function(e){
+                    if(e.target.classList.contains('gitts-remove-item')){
+                        e.target.closest('.gitts-repeater-item').remove();
+                    }
+                });
+            })();
+            </script>
+
             <?php submit_button('Guardar Configuración'); ?>
         </form>
     </div>
@@ -788,6 +1119,30 @@ function gitts_theme_defaults() {
         'gitts_sec_estudiantes_egresados' => 'Estudiantes Egresados',
         'gitts_sec_como_colaborar' => 'Cómo Colaborar',
         'gitts_sec_servicios' => 'Servicios Institucionales',
+        'gitts_especializacion_data' => wp_json_encode([
+            ['titulo'=>'Óptica y Fotónica'],['titulo'=>'Procesamiento de Señales'],['titulo'=>'Inteligencia Artificial'],
+            ['titulo'=>'Sensado Remoto'],['titulo'=>'Sistemas de Microondas'],['titulo'=>'Telecomunicaciones'],
+            ['titulo'=>'IoT'],['titulo'=>'Imágenes Hiperespectrales'],['titulo'=>'Machine Learning'],
+            ['titulo'=>'Sensado Compresivo'],['titulo'=>'Radiocomunicaciones'],['titulo'=>'Agricultura de Precisión'],
+            ['titulo'=>'Deep Learning'],['titulo'=>'NLP'],
+        ], JSON_UNESCAPED_UNICODE),
+        'gitts_sobre_gitts' => '<p>El <strong>Grupo de Investigación en Tecnologías Avanzadas de Telecomunicación y Procesamiento de Señales (GITTS)</strong> surge como una iniciativa estratégica para fortalecer las capacidades de investigación, innovación y formación de talento en áreas fundamentales para la ingeniería contemporánea.</p><p>El grupo articula de manera sostenida el trabajo científico en telecomunicaciones, procesamiento de señales, electrónica, sistemas de radiofrecuencia, sistemas ópticos, instrumentación y campos afines, integrando capacidades experimentales, analíticas y de diseño orientadas a la generación de conocimiento y al desarrollo de soluciones tecnológicas.</p><p>Las telecomunicaciones y el procesamiento de señales constituyen hoy pilares esenciales del desarrollo económico y social. La conectividad segura y eficiente es un habilitador clave para sectores como la salud, la educación, la industria, la energía y el medio ambiente. En este contexto, fortalecer capacidades científicas y tecnológicas a nivel local resulta fundamental para diseñar, evaluar e implementar sistemas de comunicación modernos.</p><p>A través de la investigación, la formación de estudiantes, la producción científica y el desarrollo de tecnologías, GITTS contribuye a consolidar una comunidad académica dinámica, fortalecer la colaboración con actores nacionales e internacionales y generar soluciones innovadoras con impacto en la sociedad.</p><p>De esta manera, el grupo aporta al fortalecimiento de la capacidad científica y tecnológica de la Universidad y del país, promoviendo el desarrollo sostenible y la formación de profesionales altamente calificados.</p>',
+        'gitts_valores_fund_data' => wp_json_encode([
+            ['titulo' => 'Integridad y ética científica', 'descripcion' => 'Honestidad, responsabilidad y transparencia en cada etapa de la investigación.'],
+            ['titulo' => 'Rigor y excelencia', 'descripcion' => 'Calidad metodológica, validación experimental y mejora continua.'],
+            ['titulo' => 'Creatividad e innovación', 'descripcion' => 'Ideas novedosas con disciplina para convertirlas en tecnología útil.'],
+            ['titulo' => 'Colaboración y trabajo en equipo', 'descripcion' => 'Proyectos interdisciplinarios que aprovechan fortalezas diversas.'],
+            ['titulo' => 'Diversidad e inclusión', 'descripcion' => 'Entorno diverso como fuente de creatividad y mejores soluciones.'],
+            ['titulo' => 'Compromiso con la sociedad', 'descripcion' => 'Difusión de resultados y transferencia responsable de tecnologías.'],
+            ['titulo' => 'Sostenibilidad', 'descripcion' => 'Eficiencia energética, impacto ambiental y social positivos.'],
+        ], JSON_UNESCAPED_UNICODE),
+        'gitts_objetivos_data' => wp_json_encode([
+            ['titulo' => 'Investigación de frontera', 'descripcion' => 'Impulsar investigación en telecomunicaciones, procesamiento de señales, IA aplicada y tecnologías emergentes, con producción científica en revistas y conferencias internacionales.'],
+            ['titulo' => 'Desarrollo tecnológico', 'descripcion' => 'Desarrollar metodologías, prototipos e instrumentos para medición, adquisición, transmisión y análisis de señales y datos.'],
+            ['titulo' => 'Formación de talento', 'descripcion' => 'Formar talento humano de alto nivel, integrando estudiantes de pregrado y posgrado en proyectos de investigación.'],
+            ['titulo' => 'Redes de colaboración', 'descripcion' => 'Fortalecer redes nacionales e internacionales con universidades, centros de investigación, industria y sector público.'],
+            ['titulo' => 'Transferencia a la sociedad', 'descripcion' => 'Transferir conocimiento y tecnología mediante servicios especializados, consultoría y difusión científica.'],
+        ], JSON_UNESCAPED_UNICODE),
     ];
     foreach ($defaults as $key => $value) {
         if (get_option($key) === false) {

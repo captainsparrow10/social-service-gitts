@@ -24,18 +24,7 @@
     <?php endif; ?>
     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/95 via-slate-900/60 to-slate-900/30"></div>
     <div class="relative max-w-7xl mx-auto px-6 pb-12 pt-32 w-full" data-aos="fade-right">
-        <div class="flex items-center gap-3 mb-4">
-            <span class="badge badge-sm font-medium text-white py-3 px-4" style="background-color:<?php echo $es_activo ? '#52975D' : '#495C9B'; ?>;border-color:<?php echo $es_activo ? '#52975D' : '#495C9B'; ?>"><?php echo esc_html($estado); ?></span>
-            <?php if ($organismo_financiador) : ?>
-                <span class="badge badge-outline border-white/40 text-white badge-sm py-3 px-4"><?php echo esc_html($organismo_financiador); ?></span>
-            <?php elseif ($entidades) : ?>
-                <span class="badge badge-outline border-white/40 text-white badge-sm py-3 px-4"><?php echo esc_html($entidades); ?></span>
-            <?php endif; ?>
-        </div>
         <h1 class="text-white font-light text-3xl lg:text-4xl leading-tight max-w-4xl"><?php the_title(); ?></h1>
-        <?php if ($ip) : ?>
-        <p class="text-slate-300 text-sm mt-4">Investigador principal: <?php echo esc_html($ip); ?></p>
-        <?php endif; ?>
     </div>
 </div>
 

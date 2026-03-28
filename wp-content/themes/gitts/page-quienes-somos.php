@@ -12,9 +12,9 @@
 <section class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-6">
         <div class="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
-            <div class="lg:col-span-3 space-y-5 prose prose-slate max-w-none" data-aos="fade-up">
+            <div class="lg:col-span-3 space-y-5 max-w-none text-slate-700 text-base leading-relaxed text-justify" data-aos="fade-up">
                 <h2 class="text-slate-800 font-semibold text-2xl mb-6">Sobre GITTS</h2>
-                <?php the_content(); ?>
+                <?php echo wp_kses_post(get_option('gitts_sobre_gitts', '')); ?>
             </div>
             <div class="lg:col-span-2 lg:sticky lg:top-24" data-aos="fade-left">
                 <?php
@@ -39,7 +39,7 @@
                         </div>
                         <h2 class="text-2xl font-semibold text-slate-800">Misión</h2>
                     </div>
-                    <div class="text-slate-600 text-base leading-relaxed"><?php echo wp_kses_post(get_option('gitts_mision', 'Generar, validar y transferir conocimiento mediante investigación científica y desarrollo tecnológico en telecomunicaciones, procesamiento de señales y áreas afines (sensado electromagnético, instrumentación, electrónica, radiofrecuencia y óptica). Con un enfoque científico riguroso y prototipos experimentales, GITTS transforma señales y datos en soluciones confiables, eficientes y seguras, formando talento e impulsando la innovación para atender retos relevantes en la industria, el sector público y la sociedad de manera sostenible.')); ?></div>
+                    <div class="text-slate-600 text-base leading-relaxed text-justify"><?php echo wp_kses_post(get_option('gitts_mision', 'Generar, validar y transferir conocimiento mediante investigación científica y desarrollo tecnológico en telecomunicaciones, procesamiento de señales y áreas afines (sensado electromagnético, instrumentación, electrónica, radiofrecuencia y óptica). Con un enfoque científico riguroso y prototipos experimentales, GITTS transforma señales y datos en soluciones confiables, eficientes y seguras, formando talento e impulsando la innovación para atender retos relevantes en la industria, el sector público y la sociedad de manera sostenible.')); ?></div>
                 </div>
             </div>
             <!-- Visión -->
@@ -51,7 +51,7 @@
                         </div>
                         <h2 class="text-2xl font-semibold text-slate-800">Visión</h2>
                     </div>
-                    <div class="text-slate-600 text-base leading-relaxed"><?php echo wp_kses_post(get_option('gitts_vision', 'Ser un grupo de investigación de referencia en Panamá y la región, reconocido por la solidez de su trabajo científico-tecnológico y la pertinencia de sus líneas de investigación, así como por la calidad de su formación y su capacidad para liderar proyectos aplicados. GITTS aspira a consolidarse como un espacio de innovación y colaboración internacional, con impacto sostenido en el desarrollo científico, productivo y social (mejoras en telecomunicaciones, salud, energía, medio ambiente, etc.), actuando como puente entre la academia y la industria.')); ?></div>
+                    <div class="text-slate-600 text-base leading-relaxed text-justify"><?php echo wp_kses_post(get_option('gitts_vision', 'Ser un grupo de investigación de referencia en Panamá y la región, reconocido por la solidez de su trabajo científico-tecnológico y la pertinencia de sus líneas de investigación, así como por la calidad de su formación y su capacidad para liderar proyectos aplicados. GITTS aspira a consolidarse como un espacio de innovación y colaboración internacional, con impacto sostenido en el desarrollo científico, productivo y social (mejoras en telecomunicaciones, salud, energía, medio ambiente, etc.), actuando como puente entre la academia y la industria.')); ?></div>
                 </div>
             </div>
         </div>
@@ -62,23 +62,21 @@
 <section class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-6">
         <h2 class="text-slate-800 font-semibold text-3xl mb-12 text-center" data-aos="fade-up"><?php echo esc_html(get_option('gitts_sec_valores_fund', 'Valores Fundamentales')); ?></h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="flex flex-wrap justify-center gap-8">
             <?php
-            $valores_q = new WP_Query(['post_type' => 'valor', 'posts_per_page' => -1, 'meta_key' => 'orden', 'orderby' => 'meta_value_num', 'order' => 'ASC']);
-            if ($valores_q->have_posts()) :
-                while ($valores_q->have_posts()) : $valores_q->the_post();
-                    $desc = get_post_meta(get_the_ID(), 'descripcion', true);
+            $valores = json_decode(get_option('gitts_valores_fund_data', '[]'), true);
+            if ($valores) : foreach ($valores as $v) :
             ?>
-            <div class="card bg-white border border-slate-200 hover:shadow-md transition-shadow" data-aos="fade-up">
+            <div class="card bg-white border border-slate-200 hover:shadow-md transition-shadow w-full md:w-[calc(50%-1rem)] lg:w-[calc(25%-1.5rem)]" data-aos="fade-up">
                 <div class="card-body p-8">
                     <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-4">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
                     </div>
-                    <h3 class="text-lg font-semibold text-slate-800 mb-2"><?php the_title(); ?></h3>
-                    <p class="text-sm text-slate-500 leading-relaxed"><?php echo esc_html($desc); ?></p>
+                    <h3 class="text-lg font-semibold text-slate-800 mb-2"><?php echo esc_html($v['titulo']); ?></h3>
+                    <p class="text-sm text-slate-500 leading-relaxed"><?php echo esc_html($v['descripcion']); ?></p>
                 </div>
             </div>
-            <?php endwhile; wp_reset_postdata(); endif; ?>
+            <?php endforeach; endif; ?>
         </div>
     </div>
 </section>
@@ -87,25 +85,23 @@
 <section class="py-20 bg-slate-50">
     <div class="max-w-7xl mx-auto px-6">
         <h2 class="text-slate-800 font-semibold text-3xl mb-12 text-center" data-aos="fade-up"><?php echo esc_html(get_option('gitts_sec_objetivos', 'Objetivos')); ?></h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="flex flex-wrap justify-center gap-6">
             <?php
-            $obj_q = new WP_Query(['post_type' => 'objetivo', 'posts_per_page' => -1, 'meta_key' => 'orden', 'orderby' => 'meta_value_num', 'order' => 'ASC']);
-            if ($obj_q->have_posts()) :
-                while ($obj_q->have_posts()) : $obj_q->the_post();
-                    $desc = get_post_meta(get_the_ID(), 'descripcion', true);
+            $objetivos = json_decode(get_option('gitts_objetivos_data', '[]'), true);
+            if ($objetivos) : foreach ($objetivos as $o) :
             ?>
-            <div class="card bg-white border border-slate-200 hover:border-primary/30 hover:shadow-md transition-all" data-aos="fade-up">
+            <div class="card bg-white border border-slate-200 hover:border-primary/30 hover:shadow-md transition-all w-full md:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)]" data-aos="fade-up">
                 <div class="card-body p-7">
                     <div class="flex items-center gap-3 mb-3">
                         <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
                         </div>
-                        <h3 class="text-base font-semibold text-slate-800"><?php the_title(); ?></h3>
+                        <h3 class="text-base font-semibold text-slate-800"><?php echo esc_html($o['titulo']); ?></h3>
                     </div>
-                    <p class="text-sm text-slate-500 leading-relaxed"><?php echo esc_html($desc); ?></p>
+                    <p class="text-sm text-slate-500 leading-relaxed"><?php echo esc_html($o['descripcion']); ?></p>
                 </div>
             </div>
-            <?php endwhile; wp_reset_postdata(); endif; ?>
+            <?php endforeach; endif; ?>
         </div>
     </div>
 </section>

@@ -16,7 +16,7 @@
 <?php wp_body_open(); ?>
 
 <!-- NAVBAR -->
-<div class="navbar backdrop-blur-lg border-b border-white/10 sticky top-0 z-50 px-4 lg:px-8">
+<div class="navbar bg-slate-900 backdrop-blur-lg border-b border-white/10 sticky top-0 z-50 px-4 lg:px-8">
     <!-- Logo -->
     <div class="navbar-start">
         <a href="<?php echo home_url(); ?>" class="flex items-center gap-3 group">
@@ -26,15 +26,29 @@
     </div>
 
     <!-- Desktop nav -->
+    <!-- Desktop nav -->
+    <?php
+    $nav_items = [
+        ['' , 'Inicio'],
+        ['/quienes-somos', '¿Quiénes somos?'],
+        ['/investigacion', 'Investigación'],
+        ['/infraestructura', 'Infraestructura'],
+        ['/produccion-cientifica', 'Producción científica'],
+        ['/equipo', 'Nuestro equipo'],
+        ['/noticias', 'Noticias'],
+    ];
+    $current_url = $_SERVER['REQUEST_URI'];
+    ?>
     <div class="navbar-center hidden lg:flex">
-        <?php wp_nav_menu([
-            'theme_location' => 'primary',
-            'container'      => false,
-            'menu_class'     => 'menu menu-horizontal px-1 gap-1',
-            'link_before'    => '<span class="text-sm font-medium text-slate-300 hover:text-white">',
-            'link_after'     => '</span>',
-            'fallback_cb'    => false,
-        ]); ?>
+        <ul class="menu menu-horizontal px-1 gap-1">
+            <?php foreach ($nav_items as $item) :
+                $path = $item[0];
+                $is_active = ($path === '' && ($current_url === '/' || $current_url === '')) || ($path !== '' && strpos($current_url, $path) !== false);
+                if ($path === '/noticias' && is_singular('post')) $is_active = true;
+            ?>
+            <li><a href="<?php echo home_url($path); ?>" class="text-sm font-medium <?php echo $is_active ? 'active' : ''; ?>"><?php echo $item[1]; ?></a></li>
+            <?php endforeach; ?>
+        </ul>
     </div>
 
     <!-- CTA + Mobile -->
@@ -44,14 +58,14 @@
             <div tabindex="0" role="button" class="btn btn-ghost btn-square">
                 <svg class="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
             </div>
-            <?php wp_nav_menu([
-                'theme_location' => 'primary',
-                'container'      => false,
-                'menu_class'     => 'menu menu-sm dropdown-content bg-white rounded-xl z-[1] mt-3 w-56 p-3 shadow-lg border border-slate-200',
-                'link_before'    => '<span class="font-medium text-slate-600">',
-                'link_after'     => '</span>',
-                'fallback_cb'    => false,
-            ]); ?>
+            <ul class="menu menu-sm dropdown-content bg-white rounded-xl z-[1] mt-3 w-56 p-3 shadow-lg border border-slate-200">
+                <?php foreach ($nav_items as $item) :
+                    $path = $item[0];
+                    $is_active = ($path === '' && ($current_url === '/' || $current_url === '')) || ($path !== '' && strpos($current_url, $path) !== false);
+                ?>
+                <li><a href="<?php echo home_url($path); ?>" class="font-medium <?php echo $is_active ? 'active' : ''; ?>"><?php echo $item[1]; ?></a></li>
+                <?php endforeach; ?>
+            </ul>
         </div>
     </div>
 </div>

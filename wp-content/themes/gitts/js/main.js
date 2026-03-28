@@ -118,11 +118,5 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Noticias tabs
-    document.querySelectorAll('.news-tab').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('.news-tab').forEach(function(t) { t.classList.remove('tab-active'); });
-            btn.classList.add('tab-active');
-        });
-    });
+    // Noticias tabs — handled inline in page-noticias.php via AJAX
 });

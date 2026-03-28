@@ -58,20 +58,18 @@ $hero_bg = ($hero_page && has_post_thumbnail($hero_page->ID))
             <h2 class="text-slate-800 font-semibold text-3xl mb-4"><?php echo esc_html(get_option('gitts_sec_valores', 'Nuestros Valores')); ?></h2>
             <p class="text-slate-500 text-base max-w-2xl mx-auto"><?php echo esc_html(get_option('gitts_intro_valores', 'Reconocemos que la capacidad para sobresalir en investigación, desarrollo tecnológico y academia depende de:')); ?></p>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+        <div class="flex flex-wrap justify-center gap-6">
             <?php
-            $valores_q = new WP_Query(['post_type' => 'valor', 'posts_per_page' => -1, 'meta_key' => 'orden', 'orderby' => 'meta_value_num', 'order' => 'ASC']);
-            if ($valores_q->have_posts()) :
-                while ($valores_q->have_posts()) : $valores_q->the_post();
-                    $desc = get_post_meta(get_the_ID(), 'descripcion', true);
+            $valores = json_decode(get_option('gitts_valores_fund_data', '[]'), true);
+            if ($valores) : foreach ($valores as $v) :
             ?>
-            <div class="card bg-white" data-aos="fade-up">
+            <div class="card bg-white w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)]" data-aos="fade-up">
                 <div class="card-body items-center text-center p-6">
-                    <h4 class="font-medium text-slate-800 text-sm mb-1"><?php the_title(); ?></h4>
-                    <p class="text-slate-400 text-xs leading-relaxed"><?php echo esc_html($desc); ?></p>
+                    <h4 class="font-medium text-slate-800 text-sm mb-1"><?php echo esc_html($v['titulo']); ?></h4>
+                    <p class="text-slate-400 text-xs leading-relaxed"><?php echo esc_html($v['descripcion']); ?></p>
                 </div>
             </div>
-            <?php endwhile; wp_reset_postdata(); endif; ?>
+            <?php endforeach; endif; ?>
         </div>
     </div>
 </section>
@@ -84,25 +82,16 @@ $hero_bg = ($hero_page && has_post_thumbnail($hero_page->ID))
         </div>
         <div class="flex flex-wrap justify-center gap-3" data-aos="fade-up" data-aos-delay="100">
             <?php
-            $esp_q = new WP_Query(['post_type' => 'especializacion', 'posts_per_page' => -1, 'meta_key' => 'orden', 'orderby' => 'meta_value_num', 'order' => 'ASC']);
-            if ($esp_q->have_posts()) :
-                while ($esp_q->have_posts()) : $esp_q->the_post();
+            $esps = json_decode(get_option('gitts_especializacion_data', '[]'), true);
+            if ($esps) : foreach ($esps as $e) :
             ?>
-                <span class="badge badge-lg badge-outline badge-primary py-3.5 px-5 text-sm font-normal"><?php the_title(); ?></span>
-            <?php endwhile; wp_reset_postdata(); endif; ?>
+                <span class="badge badge-lg badge-outline badge-primary py-3.5 px-5 text-sm font-normal"><?php echo esc_html($e['titulo']); ?></span>
+            <?php endforeach; endif; ?>
         </div>
     </div>
 </section>
 
-<!-- 5. IMPORTANCIA DE LA INVESTIGACIÓN -->
-<section class="py-24 page-header">
-    <div class="max-w-3xl mx-auto px-6 text-center" data-aos="fade-up">
-        <h2 class="text-white font-semibold text-3xl mb-8"><?php echo esc_html(get_option('gitts_importancia_titulo', 'Importancia de la Investigación')); ?></h2>
-        <p class="text-slate-200 text-base leading-relaxed font-light"><?php echo esc_html(get_option('gitts_importancia_texto', 'La investigación en telecomunicaciones y procesamiento de señales es fundamental para la vida moderna. Sus aplicaciones abarcan proyectos industriales, ambientales y sociales, desarrollo profesional, certificación de productos, soluciones comerciales y adopción de estándares. En GITTS, transformamos señales y datos en soluciones de impacto para Panamá y la región.')); ?></p>
-    </div>
-</section>
-
-<!-- 6. ACTUALIDAD -->
+<!-- 5. ACTUALIDAD -->
 <section class="py-24 bg-white">
     <div class="max-w-7xl mx-auto px-6">
         <div class="text-center mb-16" data-aos="fade-up">

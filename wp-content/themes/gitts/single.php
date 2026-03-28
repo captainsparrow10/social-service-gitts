@@ -22,10 +22,6 @@
     <?php endif; ?>
     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/95 via-slate-900/60 to-slate-900/30"></div>
     <div class="relative max-w-7xl mx-auto px-6 pb-12 pt-32 w-full">
-        <div class="flex items-center gap-3 mb-4">
-            <span class="badge badge-sm font-medium text-white py-3 px-4" style="background-color:<?php echo $badge_color; ?>;border-color:<?php echo $badge_color; ?>"><?php echo esc_html($cat_name); ?></span>
-            <span class="text-slate-300 text-sm"><?php echo get_the_date('d M Y'); ?></span>
-        </div>
         <h1 class="text-white font-light text-3xl lg:text-4xl leading-tight max-w-4xl"><?php the_title(); ?></h1>
     </div>
 </div>
@@ -35,6 +31,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
             <!-- Contenido principal -->
             <div class="lg:col-span-2">
+                <h2 class="text-primary font-semibold text-xl mb-4 pb-3 border-b border-slate-200">Resumen</h2>
                 <article class="prose prose-slate max-w-none noticia-content">
                     <?php the_content(); ?>
                 </article>
@@ -77,7 +74,7 @@
                 </div>
 
                 <div class="mt-8">
-                    <a href="<?php echo home_url('/noticias'); ?>" class="text-primary text-sm font-medium hover:underline">← Actualidad</a>
+                    <a href="<?php echo home_url('/noticias'); ?>" class="text-primary text-sm font-medium hover:underline">← Noticias</a>
                 </div>
 
                 <!-- Noticias relacionadas -->
