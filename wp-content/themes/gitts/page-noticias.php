@@ -1,106 +1,56 @@
 <?php /* Template Name: Actualidad */ get_header(); ?>
 
 <div class="page-header py-20">
-    <div class="max-w-7xl mx-auto px-6">
+    <div class="max-w-7xl mx-auto px-6" data-aos="fade-right">
         <h1 class="text-white font-light text-4xl">Noticias</h1>
         <p class="text-slate-300 mt-3 text-lg font-light"><?php echo esc_html(get_option('gitts_intro_noticias', 'Conferencias, premios, defensas de tesis, workshops y eventos del grupo.')); ?></p>
     </div>
 </div>
 
-<!-- Filtros -->
-<section class="py-8 bg-white border-b border-slate-200">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="flex gap-1">
-            <button class="tab-underline tab-active news-tab" data-filter="all">Todos</button>
-            <button class="tab-underline news-tab" data-filter="tesis">Defensas de tesis</button>
-            <button class="tab-underline news-tab" data-filter="pasantia">Pasantía</button>
-            <button class="tab-underline news-tab" data-filter="premios">Premios y reconocimientos</button>
-            <button class="tab-underline news-tab" data-filter="eventos">Eventos</button>
-            <button class="tab-underline news-tab" data-filter="conferencias">Conferencias</button>
-        </div>
-    </div>
-</section>
-
 <!-- Grid de noticias -->
 <section class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-6">
-        <div id="noticias-grid" class="grid grid-cols-1 md:grid-cols-3 gap-10"></div>
-        <div id="noticias-loading" class="text-center py-8 hidden">
-            <span class="loading loading-spinner loading-md text-primary"></span>
-        </div>
-        <div id="noticias-empty" class="text-center py-16 hidden">
-            <p class="text-slate-400 text-lg">No hay noticias en esta categoría.</p>
-        </div>
-        <div class="text-center mt-16">
-            <button id="noticias-load-more" class="btn btn-outline btn-primary font-medium hidden">Cargar más noticias</button>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <?php
+            $noticias_q = new WP_Query([
+                'post_type' => 'post',
+                'posts_per_page' => -1,
+                'orderby' => 'date',
+                'order' => 'DESC',
+            ]);
+            $idx = 0;
+            if ($noticias_q->have_posts()) :
+                while ($noticias_q->have_posts()) : $noticias_q->the_post();
+                    $cats = get_the_category();
+                    $cat_name = $cats ? $cats[0]->name : 'General';
+                    $cat_slug = $cats ? $cats[0]->slug : '';
+                    $badge_class = 'badge-outline badge-primary';
+                    if (strpos($cat_slug, 'evento') !== false) $badge_class = 'badge-outline badge-secondary';
+                    elseif (strpos($cat_slug, 'premio') !== false) $badge_class = 'badge-outline badge-accent';
+                    elseif (strpos($cat_slug, 'tesis') !== false) $badge_class = 'badge-outline badge-warning';
+                    elseif (strpos($cat_slug, 'pasantia') !== false) $badge_class = 'badge-outline badge-info';
+            ?>
+            <div class="card bg-white" data-aos="fade-up" data-aos-delay="<?php echo ($idx % 3) * 60; ?>">
+                <?php if (has_post_thumbnail()) : ?>
+                <figure><?php the_post_thumbnail('medium_large', ['class' => 'w-full h-56 object-cover']); ?></figure>
+                <?php else : ?>
+                <figure><div class="w-full h-56 bg-gradient-to-br from-slate-800 to-primary"></div></figure>
+                <?php endif; ?>
+                <div class="card-body p-6">
+                    <div class="flex items-center gap-3">
+                        <span class="badge <?php echo $badge_class; ?> badge-sm font-normal"><?php echo esc_html($cat_name); ?></span>
+                        <span class="text-xs text-slate-400"><?php echo get_the_date('d M Y'); ?></span>
+                    </div>
+                    <h3 class="text-base font-medium text-slate-800 mt-2"><?php the_title(); ?></h3>
+                    <p class="text-sm text-slate-500 leading-relaxed"><?php echo wp_trim_words(get_the_excerpt(), 20); ?></p>
+                    <div class="card-actions justify-end mt-3">
+                        <a href="<?php the_permalink(); ?>" class="text-primary text-sm font-medium hover:underline">Leer más →</a>
+                    </div>
+                </div>
+            </div>
+            <?php $idx++; endwhile; wp_reset_postdata(); endif; ?>
         </div>
     </div>
 </section>
-
-<script>
-(function(){
-    var grid = document.getElementById('noticias-grid');
-    var loadMoreBtn = document.getElementById('noticias-load-more');
-    var loadingEl = document.getElementById('noticias-loading');
-    var emptyEl = document.getElementById('noticias-empty');
-    var currentFilter = 'all';
-    var currentPage = 1;
-    var perPage = 12;
-    var hasMore = true;
-
-    function loadNoticias(page, filter, append) {
-        loadingEl.classList.remove('hidden');
-        loadMoreBtn.classList.add('hidden');
-        emptyEl.classList.add('hidden');
-
-        var url = '<?php echo admin_url("admin-ajax.php"); ?>';
-        var params = 'action=gitts_load_noticias&page=' + page + '&per_page=' + perPage + '&category=' + filter;
-
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', url, true);
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.onload = function() {
-            loadingEl.classList.add('hidden');
-            if (xhr.status === 200) {
-                var data = JSON.parse(xhr.responseText);
-                if (!append) grid.innerHTML = '';
-                if (data.html) {
-                    grid.insertAdjacentHTML('beforeend', data.html);
-                }
-                if (!data.html && !append) {
-                    emptyEl.classList.remove('hidden');
-                }
-                hasMore = data.has_more;
-                if (hasMore) {
-                    loadMoreBtn.classList.remove('hidden');
-                } else {
-                    loadMoreBtn.classList.add('hidden');
-                }
-            }
-        };
-        xhr.send(params);
-    }
-
-    // Initial load
-    loadNoticias(1, 'all', false);
-
-    // Filter tabs
-    document.querySelectorAll('.news-tab').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('.news-tab').forEach(function(t) { t.classList.remove('tab-active'); });
-            btn.classList.add('tab-active');
-            currentFilter = btn.getAttribute('data-filter');
-            currentPage = 1;
-            loadNoticias(1, currentFilter, false);
-        });
-    });
-
-    // Load more
-    loadMoreBtn.addEventListener('click', function() {
-        currentPage++;
-        loadNoticias(currentPage, currentFilter, true);
-    });
-})();
-</script>
 
 <?php get_footer(); ?>
